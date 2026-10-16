@@ -1,6 +1,6 @@
 {
 	"name": "Flic Hub Module for Home Assistant",
-	"image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:26-trixie",
 	"mounts": [
 		"source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind",
 		"source=${localEnv:HOME}/.claude.json,target=/home/node/.claude.json,type=bind"
