@@ -15,7 +15,7 @@ To also check coverage, run `npm run test:coverage`. It covers every file in `fl
 Without the devcontainer, run the suite in the same image with Docker (`--user` keeps `node_modules/` owned by you instead of root):
 
 ```sh
-docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp mcr.microsoft.com/devcontainers/javascript-node:24-bookworm bash -c "npm ci && npm test"
+docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm ci && npm test"
 ```
 
 ## Layout
