@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "eamodio.gitlens",
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker"
+    ]
+}

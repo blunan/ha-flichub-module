@@ -1,10 +1,11 @@
 # 🔘 Flic Hub Module for Home Assistant
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue)
-![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
-![Flic Hub SDK](https://img.shields.io/badge/flic--hub--sdk-compatible-f4a51c)
-![Home Assistant](https://img.shields.io/badge/home--assistant-REST%20API-41BDF5)
-![Tested with Jest](https://img.shields.io/badge/tested%20with-Jest-C21325)
+[![Tests](https://img.shields.io/github/actions/workflow/status/blunan/ha-flichub-module/test.yml?branch=main&label=tests)](https://github.com/blunan/ha-flichub-module/actions/workflows/test.yml)
+[![Version](https://img.shields.io/github/v/release/blunan/ha-flichub-module?label=version)](https://github.com/blunan/ha-flichub-module/releases/latest)
+[![License](https://img.shields.io/github/license/blunan/ha-flichub-module)](LICENSE)
+[![Flic Hub SDK](https://img.shields.io/badge/flic--hub--sdk-compatible-f4a51c)](https://flic.io/flic-hub-sdk)
+[![Home Assistant](https://img.shields.io/badge/home--assistant-REST%20API-41BDF5)](https://developers.home-assistant.io/docs/api/rest)
+[![Tested with Jest](https://img.shields.io/badge/tested%20with-Jest-C21325)](https://jestjs.io)
 
 This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your Flic Button events and states to the [Home Assistant REST API](https://developers.home-assistant.io/docs/api/rest). No cloud, no bridge, no extra hardware — the hub talks to Home Assistant directly.
 
@@ -25,8 +26,9 @@ This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your F
 * [Run automations with your Flics](#-run-automations-with-your-flics)
 * [Flic button card](#-flic-button-card)
 * [For developers](#-for-developers)
+* [License](#-license)
 
-## 🛠️ Set up
+## 🔧 Set up
 
 First you need to create a module on your Flic Hub using their [Online IDE](https://hubsdk.flic.io) and copy-paste the files under *flic_hub_module* folder:
 * `config.js`
@@ -102,9 +104,11 @@ automation:
 
 Where the possible values for **click_type** are: `single`, `double` and `hold`. Each event also carries `button_address`, the button's Bluetooth address (e.g. `80:e4:da:77:9f:c7`).
 
-Alternatively import and use the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10 or newer).
+Alternatively import and use the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10 or newer):
 
-## 🗂️ Flic button card
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fblunan%2Fha-flichub-module%2Fblob%2Fmain%2Fflic-button.yaml)
+
+## 📇 Flic button card
 
 It is possible to add a card to your dashboard to check **state**, **battery** and **connectivity** status for your flics:
 
@@ -118,3 +122,17 @@ entities:
   - entity: sensor.flic_80e4da779fc7_battery
   - entity: binary_sensor.flic_80e4da779fc7_connectivity
 ```
+
+## 💻 For developers
+
+The files in `flic_hub_module/` run on the Flic Hub's QuickJS engine, not Node, so the Jest suite in `test/` mocks the hub's `buttons` and `http` modules. Open the repo in the devcontainer (VS Code: *Reopen in Container*), which comes with Node 26 and installs dependencies automatically, then use:
+
+* `npm test` — run the Jest suite.
+* `npm run test:coverage` — run the suite and fail if coverage of `flic_hub_module/` drops below 100%.
+* `npm run lint` — run ESLint, which also flags Node-only globals (`process`, `Buffer`, …) in `flic_hub_module/`, since the hub doesn't provide them.
+
+CI ([test.yml](.github/workflows/test.yml)) runs `npm run lint` and `npm run test:coverage` on every push and pull request. See the [testing guide](test/README.md) for running the suite with Docker instead of the devcontainer, what each test file covers, and the conventions for writing new tests.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

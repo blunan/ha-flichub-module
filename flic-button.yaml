@@ -2,7 +2,7 @@ blueprint:
   name: Flic Button
   description: Handle single, double, and hold clicks from a Flic button
   domain: automation
-  source_url: https://github.com/blunan/flic-hub-home-assistant-module/blob/main/flic-button.yaml
+  source_url: https://github.com/blunan/ha-flichub-module/blob/main/flic-button.yaml
   homeassistant:
     min_version: 2024.10.0
   input:
