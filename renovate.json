@@ -10,5 +10,19 @@
   "minimumReleaseAge": "14 days",
   "internalChecksFilter": "strict",
   "automerge": false,
-  "platformAutomerge": false
+  "platformAutomerge": false,
+  "packageRules": [
+    {
+      "description": "Pin GitHub Actions to immutable digests",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true,
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "MCR does not publish release timestamps",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mcr.microsoft.com/**"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
+    }
+  ]
 }
