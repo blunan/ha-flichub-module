@@ -1,6 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:recommended",
+    "group:allNonMajor",
+    "schedule:weekly",
+    ":configMigration"
+  ],
+  "timezone": "America/Mexico_City",
+  "minimumReleaseAge": "14 days",
+  "internalChecksFilter": "strict",
+  "automerge": false,
+  "platformAutomerge": false
 }
