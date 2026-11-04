@@ -12,7 +12,7 @@ exclude_docs: |
 theme:
   name: material
   font: false                                  # system fonts (no Google Fonts requests)
-  favicon: assets/favicon.svg                  # copy of the material/radiobox-marked icon
+  favicon: assets/favicon.svg                  # white copy of the material/radiobox-marked icon
   icon:
     logo: material/radiobox-marked
     repo: fontawesome/brands/github
