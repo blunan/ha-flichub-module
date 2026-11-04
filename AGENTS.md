@@ -1,4 +1,4 @@
-# AI Agent Instructions
+# For AI Agents
 
 ## Project overview
 
@@ -175,7 +175,7 @@ Before finishing a change:
 
 ## Release & GitHub
 
-- Always use Conventional Commits.
+- Always use Conventional Commits spec.
 - The version is specified in `flic_hub_module/module.json` and `package.json`; update them together.
 - Do not commit generated coverage output, local environment files, personal configuration, secrets or credentials.
 - Keep pull requests focused and explain any intentional compatibility impact.
