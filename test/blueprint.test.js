@@ -1,6 +1,4 @@
-// flic-button.yaml is shipped to users but never runs here, so these tests read it as
-// text and check that it still matches what the module sends: the event type ha.js
-// fires and one branch per click type main.js emits.
+// Validates that flic-button.yaml matches the flic_click event type and click branches.
 
 const fs = require("fs");
 const path = require("path");

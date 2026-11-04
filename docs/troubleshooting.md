@@ -65,9 +65,9 @@ First, find out whether the event reached Home Assistant: in **Developer tools �
 
 **If the event arrives but the automation doesn't run**, check that:
 
-- `button_name` is the `flic_…` form from the event, not the name from the Flic app.
+- `button_name` uses the `flic_<address>` form from the event (e.g. `flic_80e4da779fc7`), not the display name from the Flic app.
 - `click_type` is exactly `single`, `double`, or `hold`.
-- The automation isn't still busy: automations from the [blueprint](examples.md#blueprint) run in `single` mode and ignore clicks while an action is running.
+- The automation is not still running: automations created from the [blueprint](examples.md#blueprint) execute in `single` mode and drop clicks while an action is in progress.
 
 The automation's trace, under **Settings → Automations & scenes**, shows whether it triggered and where it stopped.
 

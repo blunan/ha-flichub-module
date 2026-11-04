@@ -10,9 +10,15 @@ Every click the module accepts fires a `flic_click` event in Home Assistant, wit
 | `button_address` | `80:e4:da:77:9f:c7` | The button's Bluetooth address |
 | `click_type` | `single`, `double`, or `hold` | The gesture |
 
-`button_name` is not the name you gave the button in the Flic app; it never changes. To find a button's `button_name`, look up its entities in [Entities](entities.md#names-and-entity-ids) or [listen to the event](#test-an-automation).
+`button_name` always uses the `flic_<address>` format without colons (e.g. `flic_80e4da779fc7`), matching the button entity ID. It does not change if you rename the button in the Flic app.
 
-The hub decides the gesture. A `single` arrives about half a second after you release the button, because the hub first waits to see whether a second click follows. A `double` arrives right after the second click, and a `hold` after one second, while you're still holding the button. Each press fires at most one event; see [How the module behaves](behavior.md#one-event-per-press).
+The hub determines the gesture timing:
+
+- `single` arrives ~0.5 s after release, once the double-click timeout expires.
+- `double` arrives immediately after the second release.
+- `hold` arrives after holding for 1 second, while the button is still pressed.
+
+The module filters out duplicate and phantom clicks, ensuring each physical press fires at most one event (see [How the module behaves](behavior.md#one-event-per-press)).
 
 ## Automations
 

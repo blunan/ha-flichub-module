@@ -4,9 +4,6 @@ Send your Flic Button clicks, battery levels, and connection status to Home Assi
 
 Paste seven small files into the hub's [Online IDE](https://hubsdk.flic.io), fill in your Home Assistant address and an access token, and every button paired with the hub shows up in Home Assistant, ready to trigger automations.
 
-[Installation](installation.md){ .md-button .md-button--primary }
-[Configuration](configuration.md){ .md-button }
-
 ## Highlights
 
 - **Click events:** Single, double, and hold gestures fire a `flic_click` event in Home Assistant, ready to trigger your automations or the [blueprint](examples.md#blueprint).

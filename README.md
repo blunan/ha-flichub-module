@@ -48,17 +48,17 @@ It should look something like this:
 
 Then edit the `config.js` file so the Flic Hub can connect to your Home Assistant REST API.
 
-| Param                    | Value   | Description |
+| Param                    | Default | Description |
 | :----------------------- | :-----: | :---------- |
-| `MIN_EVENTS_OFFSET`      | Integer | Minimum time (in milliseconds) between two button events. Events arriving faster than this are ignored — see [How the module behaves](https://ha-flichub-module.blunan.com/behavior/#one-event-per-press). |
-| `SYNC_TIME`              | Integer | How often (in milliseconds) the battery and connectivity status of all your buttons is re-sent to Home Assistant — see [Regular updates](https://ha-flichub-module.blunan.com/behavior/#regular-updates). |
-| `WARNING_BATTERY_LEVEL`  | Integer | Battery percentage at or below which the battery sensor shows a warning icon — see [Battery](https://ha-flichub-module.blunan.com/entities/#battery). |
-| `LOG_LEVEL`              | Constant | How much the module writes to the Flic Hub IDE console. Use `C.LOG_LEVEL_WARNING` while setting up and tweaking the config. Once everything works, switch to `C.LOG_LEVEL_ERROR` for long-term use so only real problems are logged. `C.LOG_LEVEL_INFO` and `C.LOG_LEVEL_DEBUG` add detail for troubleshooting; `C.LOG_LEVEL_NONE` silences everything. |
-| `SERVER_HOST`            | String  | The URL where your Home Assistant instance is running, without a trailing `/`. Example: `https://192.168.XXX.YYY:8123`. |
-| `SERVER_AUTH_TOKEN`      | String  | A **Long-Lived Access Token** obtained from [your profile](https://www.home-assistant.io/docs/authentication/#your-account-profile) `https://192.168.XXX.YYY:8123/profile`. |
-| `USE_CUSTOM_CERTIFICATE` | Boolean | Enables the use of a custom certificate for HTTPS, ideal for self signed certificates. |
-| `VERIFY_CERTIFICATE`     | Boolean | If a custom certificate is used, whether to also check that the address in `SERVER_HOST` matches the one in the server's certificate (its Subject Alternative Name). The certificate itself is always checked against `CUSTOM_CERTIFICATES`; this setting only adds the address check. Turn it on if your certificate includes your Home Assistant address, and always if `CUSTOM_CERTIFICATES` holds a CA certificate rather than the server's own. |
-| `CUSTOM_CERTIFICATES`    | String  | (From [Flic Hub Documentation](https://hubsdk.flic.io/static/documentation/#43_makerequest)) One or more certificates to trust in PEM format. Can be both end entity certificates or CA certificates. If multiple certificates, concatenate them. Extraneous whitespace is allowed. |
+| `MIN_EVENTS_OFFSET`      | `600`   | Minimum milliseconds between button events; faster duplicate clicks are ignored to suppress phantom clicks. |
+| `SYNC_TIME`              | `60000` | Interval in milliseconds to re-sync battery and connectivity states to Home Assistant. |
+| `WARNING_BATTERY_LEVEL`  | `10`    | Battery percentage (5–100%) at or below which the sensor displays a warning icon (`mdi:battery-alert`). Set `< 5` to disable. |
+| `LOG_LEVEL`              | `C.LOG_LEVEL_WARNING` | Console verbosity in the Flic Hub IDE (`ERROR` for normal use, `WARNING` during setup, `INFO`/`DEBUG` for troubleshooting, `NONE` for silence). |
+| `SERVER_HOST`            | `''`    | Home Assistant URL without a trailing slash (e.g. `http://192.168.1.20:8123` or `https://...`). |
+| `SERVER_AUTH_TOKEN`      | `''`    | Long-Lived Access Token created from your Home Assistant profile. |
+| `USE_CUSTOM_CERTIFICATE` | `false` | Enable to trust custom certificates in `CUSTOM_CERTIFICATES` (for self-signed or private CA setups). |
+| `VERIFY_CERTIFICATE`     | `false` | When using custom certificates, checks that `SERVER_HOST` matches the certificate's SAN hostname. |
+| `CUSTOM_CERTIFICATES`    | `''`    | One or more PEM certificates to trust when `USE_CUSTOM_CERTIFICATE` is `true`. |
 
 > ⚠️ Be sure you have the **API** component enabled in your Home Assistant instance (enabled by default). In case you have any troubles see their [documentation](https://www.home-assistant.io/integrations/api) to know how to enable it.
 

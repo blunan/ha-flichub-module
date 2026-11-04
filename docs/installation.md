@@ -24,7 +24,7 @@ The module runs on your Flic Hub. To install it, create a module in the hub's On
 
     If the IDE already created a `main.js` or `module.json` for you, replace their contents.
 
-4. Edit `config.js`. At least set `SERVER_HOST` to your Home Assistant address and `SERVER_AUTH_TOKEN` to your token. [Configuration](configuration.md) describes every option.
+4. Edit `config.js`. Set `SERVER_HOST` to your Home Assistant address (e.g. `http://192.168.1.20:8123`) and `SERVER_AUTH_TOKEN` to your token. See [Configuration](configuration.md) for optional settings like HTTPS certificates or logging verbosity.
 5. Start the module with the play button next to its name. Tick **Restart after crash** so the hub restarts the module if it ever crashes.
 
 It should look something like this:
@@ -33,9 +33,12 @@ It should look something like this:
 
 ## Check that it works { #check }
 
-1. In Home Assistant, go to **Developer tools → States** and search for `flic_`. Each button has three entities, described in [Entities](entities.md).
-2. Press and hold a button: its `binary_sensor.flic_…` entity turns `on` while you hold it and `off` when you let go.
-3. To see the click events themselves, go to **Developer tools → Events**, start listening to `flic_click`, and click the button.
+1. In Home Assistant, go to **Developer tools → States** and search for `flic_`. Each button creates three entities:
+    - `binary_sensor.flic_<address>`: physical press state (`on` while pressed, `off` released).
+    - `sensor.flic_<address>_battery`: battery percentage (`0`–`100`%).
+    - `binary_sensor.flic_<address>_connectivity`: hub connection status (`on` / `off`).
+2. Press and hold a button: its `binary_sensor.flic_<address>` entity turns `on` while you hold it and `off` when you let go.
+3. To verify click events, go to **Developer tools → Events**, start listening to `flic_click`, and click the button. Events arrive with `button_name`, `button_address`, and `click_type` (`single`, `double`, or `hold`). See [Entities](entities.md) for details on attributes and icons.
 
 With `LOG_LEVEL` at its default, `C.LOG_LEVEL_WARNING`, the **Console** at the bottom of the IDE stays quiet unless something needs your attention. If nothing shows up in Home Assistant, see [Troubleshooting](troubleshooting.md).
 

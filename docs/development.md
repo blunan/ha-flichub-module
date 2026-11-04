@@ -13,7 +13,14 @@ The dev container provides Node.js 26 and installs the development dependencies 
 
 ### Docker
 
-Without the dev container, run the same commands in the dev container's image; see [With Docker](testing.md#with-docker).
+Without the dev container, run tests and linting in the devcontainer image:
+
+```sh
+docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm test && npm run test:coverage && npm run lint"
+```
+
+For targeted test arguments and watch mode, see [Testing with Docker](testing.md#with-docker).
 
 ## Commands
 

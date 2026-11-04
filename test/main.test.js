@@ -5,9 +5,8 @@
 // mock captures the handlers, which the tests invoke via `__fire`.
 
 jest.mock("../flic_hub_module/ha.js");
-// config.js is a user-edited deployment file, so every value main.js reads is
-// pinned here: the timing tests must not depend on someone's local tuning, and
-// logging is silenced because tests never assert on it.
+// Pin config defaults so timing tests stay isolated from user-edited deployments,
+// and silence console logs during tests.
 jest.mock("../flic_hub_module/config", () => ({
 	...jest.requireActual("../flic_hub_module/config"),
 	MIN_EVENTS_OFFSET: 600,
@@ -67,9 +66,7 @@ afterAll(() => {
 
 beforeEach(() => {
 	jest.clearAllMocks();
-	// Tests move the fake clock (setSystemTime / advanceTimersByTime) and nothing
-	// restores it, so without this reset each test would inherit whatever "now" the
-	// previous one left behind — an order-dependent trap for time-gated assertions.
+	// Reset the fake clock before each test to prevent order-dependent time leakage.
 	jest.setSystemTime(LOAD_TIME);
 });
 

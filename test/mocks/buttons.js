@@ -1,14 +1,6 @@
-// Mock of the Flic Hub SDK's "buttons" module (the buttonManager).
-//
-// The real module is only available inside the Flic Hub runtime, so Jest maps
-// the bare `buttons` specifier to this file via `moduleNameMapper`. It records
-// the handlers registered through `on(event, cb)` and exposes a few `__`-prefixed
-// helpers the tests use to seed buttons and fire events.
-//
-// Like the real SDK — "when a Button object is returned or passed in an event,
-// it is a copy of the actual internal button state" — getButton/getButtons hand
-// out copies, never live references, so mutations by the code under test can't
-// leak back into test fixtures.
+// Mock of the Flic Hub SDK "buttons" module (buttonManager).
+// Jest maps the bare `buttons` specifier to this file. It hands out shallow
+// copies matching SDK semantics and exposes `__`-prefixed test helpers.
 
 const handlers = {};
 let buttons = [];

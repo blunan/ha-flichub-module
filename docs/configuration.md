@@ -42,59 +42,66 @@ The module sends the token with every request and never writes it to the console
 
 ### `MIN_EVENTS_OFFSET` { #min-events-offset }
 
-Minimum time, in milliseconds, between two click events of the same button. Default: `600`.
+Minimum time, in milliseconds, between two click events of the same button (default: `600`).
 
-- A click event that arrives less than this long after the button's previous one is ignored.
-- A press that starts less than this long after the last hold activity counts as part of that hold, and its clicks are ignored.
+This setting debounces rapid duplicate or phantom clicks (such as spurious single clicks emitted after a hold or double click):
 
-Raise it if phantom clicks still reach your automations; lower it gradually if deliberate quick clicks get dropped. [How the module behaves](behavior.md#one-event-per-press) explains the rules in detail.
+- Clicks arriving faster than this offset after the previous accepted event are ignored.
+- Presses starting within this offset after hold activity are treated as part of the hold, ignoring subsequent clicks.
+
+**Tuning:**
+
+- Raise it (e.g. to `800`) if phantom clicks still reach your automations.
+- Lower it gradually if deliberate quick clicks get dropped.
+
+See [How the module behaves](behavior.md#one-event-per-press) for the full gesture state machine.
 
 ## Updates
 
 ### `SYNC_TIME` { #sync-time }
 
-How often, in milliseconds, the module sends the battery and connectivity of every button to Home Assistant again, even when nothing changed. Default: `60000`, written as `1 * 60 * 1000` (one minute).
+How often, in milliseconds, the module re-sends the battery and connectivity status of every button to Home Assistant (default: `60000`, written as `1 * 60 * 1000` for 1 minute).
 
-Each update takes two requests per button. A shorter interval brings the sensors back sooner after Home Assistant restarts; a longer one means less traffic. See [Regular updates](behavior.md#regular-updates).
+Each sync cycle sends two requests per button. A shorter interval restores battery and connectivity sensors sooner after Home Assistant restarts; a longer interval reduces background network requests. See [Regular updates](behavior.md#regular-updates).
 
 ### `WARNING_BATTERY_LEVEL` { #warning-battery-level }
 
-Battery percentage at or below which the battery sensor shows a warning icon (`mdi:battery-alert`). Default: `10`.
+Battery percentage at or below which the battery sensor displays a warning icon (`mdi:battery-alert`). Default: `10`.
 
-The warning applies from 5% up to this level, because below 5% the sensor always shows the empty-battery icon. Setting it lower than 5 turns the warning icon off. It only changes the icon; the sensor's state is always the level itself. See the [icon table](entities.md#battery).
+The warning icon applies from 5% up to this threshold (levels below 5% always show `mdi:battery-outline`). Setting it lower than 5 turns off the warning icon. This only affects the icon; the sensor's numeric state remains the reported percentage. See the [battery icon table](entities.md#battery).
 
 ## Logging
 
 ### `LOG_LEVEL` { #log-level }
 
-How much the module writes to the **Console** tab of the Flic Hub IDE. Each level includes everything from the levels above it:
+Controls logging verbosity in the **Console** tab of the Flic Hub IDE. Each level includes all output from levels above it:
 
 | Value | What gets written |
 |---|---|
 | `C.LOG_LEVEL_NONE` | Nothing |
-| `C.LOG_LEVEL_ERROR` | Requests to Home Assistant that failed, with the reason |
-| `C.LOG_LEVEL_WARNING` | Ignored clicks with the reason, and button disconnections |
-| `C.LOG_LEVEL_INFO` | Every press and release, every verified connection, and every click sent |
-| `C.LOG_LEVEL_DEBUG` | Every request to Home Assistant and its response |
+| `C.LOG_LEVEL_ERROR` | Failed requests to Home Assistant with reasons |
+| `C.LOG_LEVEL_WARNING` | Ignored clicks with reasons, and button disconnections |
+| `C.LOG_LEVEL_INFO` | Every button down/up, verified connection, and click event sent |
+| `C.LOG_LEVEL_DEBUG` | Full JSON request payloads and HTTP responses |
 
-Use `C.LOG_LEVEL_WARNING`, the default, while setting up and tweaking the configuration. Once everything works, switch to `C.LOG_LEVEL_ERROR` for long-term use so only real problems are logged. `C.LOG_LEVEL_INFO` and `C.LOG_LEVEL_DEBUG` add detail for [troubleshooting](troubleshooting.md#logs).
+Use `C.LOG_LEVEL_WARNING` (default) during initial setup. Once operational, switch to `C.LOG_LEVEL_ERROR` for minimal logging. Use `INFO` or `DEBUG` when diagnosing issues (see [Troubleshooting](troubleshooting.md#logs)).
 
 ## Certificates
 
-These three options matter only when `SERVER_HOST` starts with `https://`. [HTTPS and certificates](https.md) walks through each setup.
+These options configure HTTPS security when `SERVER_HOST` uses `https://`. For step-by-step guides and certificate export commands, see [HTTPS and certificates](https.md).
 
 ### `USE_CUSTOM_CERTIFICATE` { #use-custom-certificate }
 
-When `true`, the hub trusts only the certificates in `CUSTOM_CERTIFICATES` instead of its built-in list of certificate authorities. Turn it on for self-signed certificates or certificates from your own certificate authority. Default: `false`.
+When `true`, the hub trusts only the certificates specified in `CUSTOM_CERTIFICATES` rather than its built-in list of certificate authorities (default: `false`). Enable this for self-signed certificates or private CA setups.
 
 ### `VERIFY_CERTIFICATE` { #verify-certificate }
 
-When a custom certificate is used, whether to also check that the address in `SERVER_HOST` matches one in the server's certificate (its Subject Alternative Name). The certificate itself is always checked against `CUSTOM_CERTIFICATES`; this setting only adds the address check. Default: `false`.
+When using custom certificates, checks that the address in `SERVER_HOST` matches a Subject Alternative Name (SAN) in the server's certificate (default: `false`).
 
-Turn it on if your certificate includes your Home Assistant address, and always if `CUSTOM_CERTIFICATES` holds a CA certificate rather than the server's own.
+Enable this if your certificate includes your Home Assistant hostname/IP, and always enable it when `CUSTOM_CERTIFICATES` holds a CA certificate.
 
 ### `CUSTOM_CERTIFICATES` { #custom-certificates }
 
-From the [Flic Hub documentation](https://hubsdk.flic.io/static/documentation/#43_makerequest): one or more certificates to trust, in PEM format. They can be end-entity certificates or CA certificates; to trust several, concatenate them. Extraneous whitespace is allowed.
+One or more PEM-formatted certificates to trust (server certificate or CA certificate). To trust multiple certificates, concatenate them. Extraneous whitespace is allowed.
 
-A PEM certificate spans several lines, so paste it between backticks rather than quotes. See [Paste it into config.js](https.md#paste-the-certificate).
+Because PEM certificates span multiple lines, paste them between backticks (`` `...` ``) in `config.js` rather than single or double quotes. See [Paste it into config.js](https.md#paste-the-certificate).

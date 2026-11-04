@@ -20,14 +20,14 @@ A phantom click is an extra `single` after one of these gestures, without a new 
 
 A click reaches Home Assistant only when it passes these rules:
 
-1. **A fresh press is needed.** A `single` or `double` counts only after a press and release the module saw itself. After the module starts or a button reconnects, a click that arrives before any press is ignored. After each event, the next `single` or `double` needs a new press and release. This rule is what drops the phantom `single` after a hold or a double click. A `hold` is reported while the button is still down, so it doesn't need a release first.
-2. **Not too soon.** Any click, including a `hold`, is ignored if it arrives less than [`MIN_EVENTS_OFFSET`](configuration.md#min-events-offset) milliseconds (default 600) after the button's previous accepted event.
-3. **A hold absorbs quick re-presses.** While you hold a button, tiny finger movements can make some buttons, notably the Flic 2, report extra quick presses. Any press that starts within `MIN_EVENTS_OFFSET` of the last hold activity (the hold itself, or the release that ends it) is treated as part of that same hold, and its clicks are ignored. Fully release the button and pause briefly before clicking again.
+1. **A fresh press cycle is required:** Single and double clicks require a fresh button down and up cycle observed by the module. Clicks arriving before an initial physical press (after module start or reconnect), or extra clicks without a new press (such as a phantom single after a hold or double click), are ignored. Holds fire while pressed and do not require a prior release.
+2. **Debounce window (`MIN_EVENTS_OFFSET`):** Any click arriving less than [`MIN_EVENTS_OFFSET`](configuration.md#min-events-offset) milliseconds (default: `600`) after the previous accepted event is ignored.
+3. **Hold micro-movement absorption:** Tiny finger movements during a hold can cause some buttons (notably Flic 2) to report rapid down/up pairs. Any press starting within `MIN_EVENTS_OFFSET` of hold activity (the hold itself or its release) is treated as part of that hold, and its clicks are ignored.
 
-Two things stay true whatever the rules decide:
+Two guarantees remain in effect regardless of filtering decisions:
 
-- **The button sensor always follows the button.** `binary_sensor.flic_<address>` turns `on` when you press and `off` when you release, even when a click is ignored. Ignoring a click only means no `flic_click` event is fired.
-- **Every ignored click is explained.** With [`LOG_LEVEL`](configuration.md#log-level) at `C.LOG_LEVEL_WARNING` or higher, the module writes the reason to the Flic Hub IDE console. [Troubleshooting](troubleshooting.md#ignored-clicks) lists each reason and what to do about it.
+- **The physical button sensor always tracks presses:** `binary_sensor.flic_<address>` turns `on` when pressed and `off` when released, even when a click event is ignored.
+- **Ignored clicks are logged:** With [`LOG_LEVEL`](configuration.md#log-level) at `C.LOG_LEVEL_WARNING` or higher, the module logs the specific reason to the Flic Hub IDE console (see [Troubleshooting](troubleshooting.md#ignored-clicks)).
 
 ### Tuning `MIN_EVENTS_OFFSET` { #tuning }
 

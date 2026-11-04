@@ -12,11 +12,10 @@ Clicks don't have an entity: they fire a [`flic_click` event](examples.md#flic-c
 
 ## Names and entity IDs { #names-and-entity-ids }
 
-- **Entity IDs** always come from the Bluetooth address, so they never change, even if you rename the button.
-- **Display names** use the name you gave the button in the Flic app: a button named *Gamer* shows up as *Gamer*, *Gamer Battery*, and *Gamer Connectivity*. A button without a name shows as `flic_80e4da779fc7` instead, with the same suffixes.
-- **Renaming** the button in the Flic app updates the display names with the next update of each entity.
-
-The `button_name` in each `flic_click` event is the `flic_80e4da779fc7` form, not the name from the Flic app.
+- **Entity IDs** always derive from the button's Bluetooth address without colons (`flic_<address>`) and never change, even if you rename the button.
+- **Display names** use the name assigned in the Flic app (e.g. *Gamer*, *Gamer Battery*, *Gamer Connectivity*). Unnamed buttons default to `flic_<address>`.
+- **Renaming** the button in the Flic app updates display names on the next entity state update.
+- **Event identifier:** In `flic_click` events, `button_name` always uses the `flic_<address>` format, not the display name.
 
 ## Button state { #button-state }
 
@@ -69,7 +68,17 @@ Home Assistant doesn't keep these entities across its own restarts. The battery 
 
 ## No unique ID { #no-unique-id }
 
-The module creates these entities by setting their states through the Home Assistant REST API, so they aren't in Home Assistant's entity registry. Home Assistant says they have no unique ID, and you can't rename them, change their icon, or assign them to an area from the UI.
+The module creates entities via the Home Assistant REST API rather than an integration registry, so Home Assistant reports that they have no unique ID. You cannot rename them, customize their icons, or assign them to areas through the Home Assistant UI.
 
-- To change the display name, rename the button in the Flic app.
-- On a dashboard, set a `name` or `icon` per entity in the card instead; see the [dashboard card](examples.md#dashboard).
+- To change display names, rename the button in the Flic app.
+- To customize titles, labels, or icons on your dashboard, configure them directly in your dashboard card (see [Automations and dashboards](examples.md#dashboard)):
+
+```yaml
+type: entities
+title: Flic Gamer
+entities:
+  - entity: binary_sensor.flic_80e4da779fc7
+    name: Pressed
+  - entity: sensor.flic_80e4da779fc7_battery
+  - entity: binary_sensor.flic_80e4da779fc7_connectivity
+```
