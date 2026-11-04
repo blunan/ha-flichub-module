@@ -1,6 +1,7 @@
 # 🔘 Flic Hub Module for Home Assistant
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/blunan/ha-flichub-module/test.yml?branch=main&label=tests)](https://github.com/blunan/ha-flichub-module/actions/workflows/test.yml)
+[![Docs](https://img.shields.io/badge/docs-ha--flichub--module.blunan.com-526CFE?logo=materialformkdocs&logoColor=white)](https://ha-flichub-module.blunan.com/)
 [![Version](https://img.shields.io/github/v/release/blunan/ha-flichub-module?label=version)](https://github.com/blunan/ha-flichub-module/releases/latest)
 [![License](https://img.shields.io/github/license/blunan/ha-flichub-module)](LICENSE)
 [![Flic Hub SDK](https://img.shields.io/badge/flic--hub--sdk-compatible-f4a51c)](https://flic.io/flic-hub-sdk)
@@ -8,6 +9,8 @@
 [![Tested with Jest](https://img.shields.io/badge/tested%20with-Jest-C21325)](https://jestjs.io)
 
 This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your Flic Button events and states to the [Home Assistant REST API](https://developers.home-assistant.io/docs/api/rest). No cloud, no bridge, no extra hardware — the hub talks to Home Assistant directly.
+
+> 📖 **Full documentation at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/):** HTTPS certificates, how clicks are filtered, every entity in detail, more automation examples, and troubleshooting.
 
 > If you have any automations running with the **flicd add-on** from [pschmitt's addon](https://github.com/pschmitt/home-assistant-addons) they will continue to work after pairing the same Flic Button to the Flic Hub, as the events sent by the module keep the same [type and data](https://www.home-assistant.io/integrations/flic) (`button_name`, `button_address` and `click_type`; only `queued_time` is not sent).
 
@@ -22,15 +25,15 @@ This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your F
 ## 📋 Table of contents
 
 * [Set up](#-set-up)
-* [How the module behaves](#-how-the-module-behaves)
 * [Run automations with your Flics](#-run-automations-with-your-flics)
 * [Flic button card](#-flic-button-card)
-* [For developers](#-for-developers)
+* [Documentation](#-documentation)
+* [Contributing](#-contributing)
 * [License](#-license)
 
 ## 🔧 Set up
 
-First you need to create a module on your Flic Hub using their [Online IDE](https://hubsdk.flic.io) and copy-paste the files under *flic_hub_module* folder:
+First you need to create a module on your Flic Hub using their [Online IDE](https://hubsdk.flic.io) and copy-paste the files under `flic_hub_module` folder:
 * `config.js`
 * `constants.js`
 * `ha.js`
@@ -41,47 +44,25 @@ First you need to create a module on your Flic Hub using their [Online IDE](http
 
 It should look something like this:
 
-![Flic Hub Online IDE](./res/FlicHubOnlineIDE.png?raw=true "Flic Hub Online IDE")
+![Flic Hub Online IDE](./docs/assets/FlicHubOnlineIDE.png?raw=true "Flic Hub Online IDE")
 
 Then edit the `config.js` file so the Flic Hub can connect to your Home Assistant REST API.
 
-| Param                    | Value   | Description |
+| Param                    | Default | Description |
 | :----------------------- | :-----: | :---------- |
-| `MIN_EVENTS_OFFSET`      | Integer | Minimum time (in milliseconds) between two button events. Events arriving faster than this are ignored — see [How the module behaves](#-how-the-module-behaves). |
-| `SYNC_TIME`              | Integer | How often (in milliseconds) the battery and connectivity status of all your buttons is re-sent to Home Assistant — see [How the module behaves](#-how-the-module-behaves). |
-| `WARNING_BATTERY_LEVEL`  | Integer | Battery percentage at or below which the battery sensor shows a warning icon — see [How the module behaves](#-how-the-module-behaves). |
-| `LOG_LEVEL`              | Constant | How much the module writes to the Flic Hub IDE console. Use `C.LOG_LEVEL_WARNING` while setting up and tweaking the config. Once everything works, switch to `C.LOG_LEVEL_ERROR` for long-term use so only real problems are logged. `C.LOG_LEVEL_INFO` and `C.LOG_LEVEL_DEBUG` add detail for troubleshooting; `C.LOG_LEVEL_NONE` silences everything. |
-| `SERVER_HOST`            | String  | The URL where your Home Assistant instance is running, without a trailing `/`. Example: `https://192.168.XXX.YYY:8123`. |
-| `SERVER_AUTH_TOKEN`      | String  | A **Long-Lived Access Token** obtained from [your profile](https://www.home-assistant.io/docs/authentication/#your-account-profile) `https://192.168.XXX.YYY:8123/profile`. |
-| `USE_CUSTOM_CERTIFICATE` | Boolean | Enables the use of a custom certificate for HTTPS, ideal for self signed certificates. |
-| `VERIFY_CERTIFICATE`     | Boolean | If a custom certificate is used, whether to also check that the address in `SERVER_HOST` matches the one in the server's certificate (its Subject Alternative Name). The certificate itself is always checked against `CUSTOM_CERTIFICATES`; this setting only adds the address check. Turn it on if your certificate includes your Home Assistant address, and always if `CUSTOM_CERTIFICATES` holds a CA certificate rather than the server's own. |
-| `CUSTOM_CERTIFICATES`    | String  | (From [Flic Hub Documentation](https://hubsdk.flic.io/static/documentation/#43_makerequest)) One or more certificates to trust in PEM format. Can be both end entity certificates or CA certificates. If multiple certificates, concatenate them. Extraneous whitespace is allowed. |
+| `MIN_EVENTS_OFFSET`      | `600`   | Minimum milliseconds between button events; faster duplicate clicks are ignored to suppress phantom clicks. |
+| `SYNC_TIME`              | `60000` | Interval in milliseconds to re-sync battery and connectivity states to Home Assistant. |
+| `WARNING_BATTERY_LEVEL`  | `10`    | Battery percentage (5–100%) at or below which the sensor displays a warning icon (`mdi:battery-alert`). Set `< 5` to disable. |
+| `LOG_LEVEL`              | `C.LOG_LEVEL_WARNING` | Console verbosity in the Flic Hub IDE (`ERROR` for normal use, `WARNING` during setup, `INFO`/`DEBUG` for troubleshooting, `NONE` for silence). |
+| `SERVER_HOST`            | `''`    | Home Assistant URL without a trailing slash (e.g. `http://192.168.1.20:8123` or `https://...`). |
+| `SERVER_AUTH_TOKEN`      | `''`    | Long-Lived Access Token created from your Home Assistant profile. |
+| `USE_CUSTOM_CERTIFICATE` | `false` | Enable to trust custom certificates in `CUSTOM_CERTIFICATES` (for self-signed or private CA setups). |
+| `VERIFY_CERTIFICATE`     | `false` | When using custom certificates, checks that `SERVER_HOST` matches the certificate's SAN hostname. |
+| `CUSTOM_CERTIFICATES`    | `''`    | One or more PEM certificates to trust when `USE_CUSTOM_CERTIFICATE` is `true`. |
 
 > ⚠️ Be sure you have the **API** component enabled in your Home Assistant instance (enabled by default). In case you have any troubles see their [documentation](https://www.home-assistant.io/integrations/api) to know how to enable it.
 
-## 🧠 How the module behaves
-
-**One event per button press.** Flic buttons sometimes report an extra `single` click when you release the button after a **hold** or a **double** click. The module makes sure each press sends only one event to Home Assistant, so those phantom clicks never trigger your automations. Because of this protection:
-
-* After the hub restarts or a button reconnects, the button needs to be physically pressed before events flow again — a stray event arriving before any press is ignored.
-* While you hold a button, tiny finger movements can make some buttons (notably Flic 2) report extra quick presses. Any press that starts within `MIN_EVENTS_OFFSET` milliseconds (default 600) of the last hold activity is treated as part of that same hold, so fully release the button and pause briefly before clicking again.
-* The button's on/off sensor in Home Assistant always follows the physical button, even when a click is ignored. Ignoring a click only means no `flic_click` event is fired.
-* Whenever an event is ignored, the module explains why in the Flic Hub IDE console (as long as `LOG_LEVEL` is `C.LOG_LEVEL_WARNING` or higher), so you can always check what happened.
-
-**Battery icons.** The battery sensor picks its icon from the reported level:
-
-* No level reported yet → the sensor shows `unknown` with a question-mark battery icon.
-* Below 5% → empty battery icon.
-* At or below `WARNING_BATTERY_LEVEL` (and at least 5%) → warning icon. Setting `WARNING_BATTERY_LEVEL` lower than 5 turns the warning off.
-* Anything else → the icon closest to the level (95% and up shows a full battery).
-
-**Sensor names.** Each button gets three sensors named after its Bluetooth address, e.g. `binary_sensor.flic_80e4da779fc7` (see [Flic button card](#-flic-button-card)). Their display names use the name you gave the button in the Flic app; a button without a name is shown as `flic_<address>` instead.
-
-**Regular updates.** Every `SYNC_TIME` milliseconds the module re-sends the battery and connectivity status of all your buttons, so Home Assistant stays up to date even when no one presses anything.
-
-**When Home Assistant restarts.** Home Assistant doesn't remember sensors created by the module across its own restarts. The battery and connectivity sensors come back at the next regular update; the button's on/off sensor comes back the next time the button is pressed (or reconnects to the hub).
-
-**Removing a button.** When you remove a button from the Flic Hub, the module deletes its three sensors from Home Assistant.
+Using HTTPS with a self-signed certificate or your own certificate authority? See [HTTPS and certificates](https://ha-flichub-module.blunan.com/https/). The [configuration guide](https://ha-flichub-module.blunan.com/configuration/) describes every option in detail, and the [installation guide](https://ha-flichub-module.blunan.com/installation/) also covers checking that it works and updating the module.
 
 ## 🤖 Run automations with your Flics
 
@@ -104,15 +85,19 @@ automation:
 
 Where the possible values for **click_type** are: `single`, `double` and `hold`. Each event also carries `button_address`, the button's Bluetooth address (e.g. `80:e4:da:77:9f:c7`).
 
+Each press fires at most one event: the module drops the phantom clicks some buttons report after a hold or a double click. After the module starts or a button reconnects, press the button once before clicks flow — see [How the module behaves](https://ha-flichub-module.blunan.com/behavior/).
+
 Alternatively import and use the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10 or newer):
 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fblunan%2Fha-flichub-module%2Fblob%2Fmain%2Fflic-button.yaml)
+
+More [automation examples](https://ha-flichub-module.blunan.com/examples/): every click type in one automation, acting while a button is held, and testing without pressing a button.
 
 ## 📇 Flic button card
 
 It is possible to add a card to your dashboard to check **state**, **battery** and **connectivity** status for your flics:
 
-![Flic Button Card](./res/FlicButtonCard.png?raw=true "Flic Button Card")
+![Flic Button Card](./docs/assets/FlicButtonCard.png?raw=true "Flic Button Card")
 
 ```yaml
 type: entities
@@ -123,15 +108,24 @@ entities:
   - entity: binary_sensor.flic_80e4da779fc7_connectivity
 ```
 
-## 💻 For developers
+See [Entities](https://ha-flichub-module.blunan.com/entities/) for every state, attribute, and icon, and why the entities can't be renamed from the Home Assistant UI.
 
-The files in `flic_hub_module/` run on the Flic Hub's QuickJS engine, not Node, so the Jest suite in `test/` mocks the hub's `buttons` and `http` modules. Open the repo in the devcontainer (VS Code: *Reopen in Container*), which comes with Node 26 and installs dependencies automatically, then use:
+## 📖 Documentation
 
-* `npm test` — run the Jest suite.
-* `npm run test:coverage` — run the suite and fail if coverage of `flic_hub_module/` drops below 100%.
-* `npm run lint` — run ESLint, which also flags Node-only globals (`process`, `Buffer`, …) in `flic_hub_module/`, since the hub doesn't provide them.
+| Page | What's in it |
+| :--- | :--- |
+| 📦 [Installation](https://ha-flichub-module.blunan.com/installation/) | Creating the module in the Flic Hub IDE, checking that it works, and updating it |
+| ⚙️ [Configuration](https://ha-flichub-module.blunan.com/configuration/) | Every option in `config.js`, with its default and when to change it |
+| 🔒 [HTTPS and certificates](https://ha-flichub-module.blunan.com/https/) | Plain HTTP, trusted certificates, and self-signed or private-CA setups |
+| 🔋 [Entities](https://ha-flichub-module.blunan.com/entities/) | The three entities per button: states, attributes, icons, and naming |
+| 🤖 [Automations and dashboards](https://ha-flichub-module.blunan.com/examples/) | `flic_click` automations, the blueprint, testing, and a dashboard card |
+| 🧠 [How the module behaves](https://ha-flichub-module.blunan.com/behavior/) | Phantom-click filtering, regular updates, reconnects, and restarts |
+| 🩺 [Troubleshooting](https://ha-flichub-module.blunan.com/troubleshooting/) | Reading the console, failed requests, ignored clicks, and reporting issues |
+| 🛠️ [Development](https://ha-flichub-module.blunan.com/development/) | Dev container, code style, how it works, tests, CI, documentation, and releases |
 
-CI ([test.yml](.github/workflows/test.yml)) runs `npm run lint` and `npm run test:coverage` on every push and pull request. See the [testing guide](test/README.md) for running the suite with Docker instead of the devcontainer, what each test file covers, and the conventions for writing new tests.
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! The [development guide](https://ha-flichub-module.blunan.com/development/) covers the dev container, code style, CI, and releases; [How it works](https://ha-flichub-module.blunan.com/architecture/) explains the code, and the [testing guide](https://ha-flichub-module.blunan.com/testing/) covers running and writing tests.
 
 ## 📄 License
 

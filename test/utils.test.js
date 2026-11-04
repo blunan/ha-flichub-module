@@ -1,6 +1,4 @@
-// Default threshold for any test that doesn't pin its own: config.js is a
-// user-edited deployment file (per the README), so tests must not fail when
-// someone tunes it for their own setup.
+// Pin config defaults so tests remain isolated from local user adjustments.
 jest.mock("../flic_hub_module/config", () => ({
 	...jest.requireActual("../flic_hub_module/config"),
 	WARNING_BATTERY_LEVEL: 8,
@@ -62,11 +60,8 @@ describe("getBatteryIcon", () => {
 
 	const setWarningLevel = (level) => jest.replaceProperty(CFG, "WARNING_BATTERY_LEVEL", level);
 
-	// Inputs carrying no usable numeric level. C.BATTERY_STATE_UNKNOWN is what ha.js actually
-	// sends for a button that hasn't reported a battery; getBatteryIcon deliberately matches on
-	// "is this a usable number" instead of that string, so the two cannot drift apart. The rest
-	// are defensive — each one used to reach the rounding arithmetic and produce the
-	// unresolvable 'mdi:battery-NaN'.
+	// Verify non-numeric or missing battery levels fall back to mdi:battery-unknown
+	// instead of producing an unresolvable 'mdi:battery-NaN'.
 	const UNUSABLE_LEVELS = [C.BATTERY_STATE_UNKNOWN, "unavailable", undefined, null, NaN, {}];
 
 	// A threshold of 0 empties the alert band ([5, 0] has no members), leaving the
@@ -109,9 +104,7 @@ describe("getBatteryIcon", () => {
 			expect(utils.getBatteryIcon(26)).toBe("mdi:battery-30");
 		});
 
-		// Deliberate precedence, not an oversight: 0-4 is the "0%" rounding bucket, so it
-		// renders as an empty battery rather than a warning. A battery that never reported
-		// is a separate case with its own icon, not part of this band.
+		// 0-4% renders as an empty battery (mdi:battery-outline) rather than alert.
 		test("does not extend below 5, which stays the empty icon", () => {
 			setWarningLevel(8);
 			expect(utils.getBatteryIcon(4)).toBe("mdi:battery-outline");

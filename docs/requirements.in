@@ -1,0 +1,8 @@
+# The guide's build tool. Lock it into requirements.txt, with every package's
+# hash and only releases at least 14 days old, on the Python version that
+# .github/workflows/docs.yml installs (pip-tools, with pip 26 or later):
+#   docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/docs:/docs" -w /docs \
+#     python:3.14-slim-trixie sh -c 'python -m venv /tmp/v && /tmp/v/bin/pip install -q pip-tools &&
+#     /tmp/v/bin/pip-compile --generate-hashes --strip-extras --no-emit-index-url \
+#       --pip-args "--uploaded-prior-to P14D" --output-file requirements.txt requirements.in'
+mkdocs-material==9.7.7

@@ -1,10 +1,7 @@
-// ha.js talks to Home Assistant through the Flic Hub's `http.makeRequest`. That
-// `http` module only exists on the hub, so it is mocked virtually here; Node's
-// real `http` is never used. ha.js itself is exercised for real.
+// Mocks host SDK 'http' virtually while exercising ha.js directly.
 
 jest.mock("http", () => ({ makeRequest: jest.fn() }), { virtual: true });
-// config.js is a user-edited deployment file, so every value ha.js reads is pinned
-// here; tests that need a different value override it with jest.replaceProperty.
+// Pin config defaults so tests remain isolated from local user adjustments.
 jest.mock("../flic_hub_module/config", () => ({
 	...jest.requireActual("../flic_hub_module/config"),
 	SERVER_HOST: "https://ha.test:8123",
@@ -175,7 +172,7 @@ describe("request headers and trust store", () => {
 
 // The response callback's only effect is logging, so these tests spy on the logger
 // methods. They assert the severity each outcome is routed to, and that the auth token
-// never appears in a logged message, but never the text itself (see test/README.md).
+// never appears in a logged message, but never the text itself (see docs/testing.md).
 describe("response handling", () => {
 	const button = { bdaddr: ADDR, name: null };
 	const send = (method) => (method === "DELETE" ? ha.sendRemovedState(button) : ha.sendButtonState(button, "on"));
