@@ -11,7 +11,8 @@
   "internalChecksFilter": "strict",
   "automerge": false,
   "platformAutomerge": false,
-	"assignees": ["blun4n"],
+  "semanticCommits": "enabled",
+  "assignees": ["blun4n"],
   "ignorePaths": ["docs/requirements.in", "docs/requirements.txt"],
   "packageRules": [
     {
