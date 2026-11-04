@@ -114,7 +114,7 @@ CI runs lint and coverage tests on pushes and pull requests. Run both before con
 
 If the devcontainer is unavailable, the Docker-based alternative is documented in `docs/testing.md`.
 
-The documentation site is built with Material for MkDocs. Preview and build it with a local venv or a throwaway `python:3.15-slim-trixie` container, as documented in `docs/development.md`. The `docs` CI workflow runs `mkdocs build --strict` on pull requests and deploys the site from `main`.
+The documentation site is built with Material for MkDocs. Preview and build it with a local venv or a throwaway `python:3.14-slim-trixie` container, as documented in `docs/development.md`. The `docs` CI workflow runs `mkdocs build --strict` on pull requests and deploys the site from `main`.
 
 ## Testing requirements
 

@@ -79,7 +79,7 @@ python3 -m venv .venv
 Without a local Python, preview it in a throwaway container on the same Python version as CI (`python-version` in `.github/workflows/docs.yml`):
 
 ```sh
-docker run --rm -it -p 127.0.0.1:8000:8000 -v "$PWD:/work:ro" -w /work python:3.15-slim-trixie \
+docker run --rm -it -p 127.0.0.1:8000:8000 -v "$PWD:/work:ro" -w /work python:3.14-slim-trixie \
   sh -c 'pip install -q --root-user-action=ignore --require-hashes -r docs/requirements.txt && mkdocs serve -a 0.0.0.0:8000'
 ```
 

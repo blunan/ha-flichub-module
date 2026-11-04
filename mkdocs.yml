@@ -31,6 +31,8 @@ theme:
         icon: material/brightness-4
         name: Follow the system setting
   features:
+    - navigation.sections
+    - navigation.expand
     - navigation.top
     - navigation.footer
     - content.code.copy
