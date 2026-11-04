@@ -36,17 +36,20 @@ Run both `npm run lint` and `npm run test:coverage` before opening a pull reques
 
 ```text
 .
-├── .devcontainer/        Dev container configuration
-├── .github/workflows/    CI: tests, and the documentation site
-├── docs/                 Documentation site source and its locked build tool
-├── flic_hub_module/      The module users paste into the Flic Hub IDE
-├── test/                 Jest tests and the Flic Hub SDK mocks
-├── AGENTS.md             Instructions for AI coding agents
-├── eslint.config.js      Lint rules, including the hub's runtime globals
-├── flic-button.yaml      Home Assistant automation blueprint
-├── mkdocs.yml            Documentation site configuration
-├── package.json          Scripts, development dependencies, and Jest configuration
-└── renovate.json         Automated dependency update policy
+├── .devcontainer/                 Dev container configuration
+├── .github/workflows/             CI: tests, the documentation site, and releases
+├── docs/                          Documentation site source and its locked build tool
+├── flic_hub_module/               The module users paste into the Flic Hub IDE
+├── test/                          Jest tests and the Flic Hub SDK mocks
+├── .release-please-manifest.json  The last released version, kept by release-please
+├── AGENTS.md                      Instructions for AI coding agents
+├── CHANGELOG.md                   What changed in each version, kept by release-please
+├── eslint.config.js               Lint rules, including the hub's runtime globals
+├── flic-button.yaml               Home Assistant automation blueprint
+├── mkdocs.yml                     Documentation site configuration
+├── package.json                   Scripts, development dependencies, and Jest configuration
+├── release-please-config.json     Release settings: changelog sections and version files
+└── renovate.json                  Automated dependency update policy
 ```
 
 ## Code style
@@ -58,7 +61,7 @@ Run both `npm run lint` and `npm run test:coverage` before opening a pull reques
 - **Formatting:** tabs, LF line endings, and a final newline, as `.editorconfig` sets; YAML uses two spaces.
 - **Home Assistant contract:** entity IDs, the `flic_click` event, its data, and its values are relied on by users' automations. Change them only on purpose, together with the README, these docs, the blueprint, and the contract tests. See [Home Assistant requests](architecture.md#home-assistant-requests).
 - **Credentials:** never log the access token.
-- **Commits:** use [Conventional Commits](https://www.conventionalcommits.org/), such as `fix: …`, `docs: …`, or `chore(deps): …`.
+- **Commits:** use [Conventional Commits](https://www.conventionalcommits.org/), such as `fix: …`, `docs: …`, or `chore(deps): …`. A pull request's title decides the next version; see the [release process](#releases).
 
 ## Testing
 
@@ -109,6 +112,7 @@ The lock is resolved on the Python version that `.github/workflows/docs.yml` ins
 |---|---|---|
 | **test** (`test.yml`) | Pull requests, pushes to `main`, manual | Runs `npm run lint` and `npm run test:coverage` in a Node.js 26 container |
 | **docs** (`docs.yml`) | Pull requests, pushes to `main` that change the docs, manual | Runs `mkdocs build --strict`; pushes to `main` also deploy the site to GitHub Pages |
+| **release** (`release.yml`) | Pushes to `main` | Runs release-please, which keeps the release pull request up to date and, once it's merged, tags the version and publishes the GitHub release |
 
 ## Dependency updates
 
@@ -119,10 +123,19 @@ The lock is resolved on the Python version that `.github/workflows/docs.yml` ins
 - GitHub Actions are pinned to immutable commit digests and grouped in their own pull request.
 - Only releases at least 14 days old are proposed.
 - Every dependency pull request needs manual review and passing CI before merging.
+- Updates are titled `chore(deps):` and release nothing: the module has no dependencies, so they only change development tooling.
 - The documentation's locked dependencies are [updated by hand](#docs-dependencies).
 
 ## Release process { #releases }
 
-1. Bump the `version` in both `flic_hub_module/module.json` and `package.json` in a pull request. The README's version badge follows the latest GitHub release.
-2. Before releasing, check the module on real hardware: paste it into the Flic Hub IDE, press your buttons, and watch the console and the button's entities in Home Assistant (`binary_sensor.flic_<address>`, `sensor.flic_<address>_battery`, and `binary_sensor.flic_<address>_connectivity`).
-3. After merging, publish a GitHub release with a new `vX.Y.Z` tag on `main`, titled `vX.Y.Z — <summary>` and listing the changes.
+Versions come from `.github/workflows/release.yml`, which runs [release-please](https://github.com/googleapis/release-please) on every push to `main`. Pull request titles follow [Conventional Commits](https://www.conventionalcommits.org/), and since `main` takes squash merges only, each title becomes the commit release-please reads:
+
+- `feat:` (new or changed behavior) proposes a minor version, and `fix:`, `perf:`, or `revert:` a patch. `feat!:` or a `BREAKING CHANGE:` footer proposes a major.
+- Other types (`docs:`, `ci:`, `chore:`, `refactor:`, `test:`, `build:`, `style:`) propose none.
+
+release-please keeps a release pull request open with the next version and its `CHANGELOG.md` entry. That pull request also bumps the version in `flic_hub_module/module.json`, `package.json`, and `package-lock.json`, so don't change them by hand. When a version should go out:
+
+1. Check the module on real hardware: paste it into the Flic Hub IDE, press your buttons, and watch the console and the button's entities in Home Assistant (`binary_sensor.flic_<address>`, `sensor.flic_<address>_battery`, and `binary_sensor.flic_<address>_connectivity`).
+2. Merge the release pull request. That tags `vX.Y.Z` and publishes the [GitHub release](https://github.com/blunan/ha-flichub-module/releases). The README's version badge follows the latest release.
+
+The workflow uses a GitHub App token (the `RELEASE_APP_CLIENT_ID` variable and the `RELEASE_APP_PRIVATE_KEY` secret), not `GITHUB_TOKEN`, because a pull request opened with `GITHUB_TOKEN` runs no workflows, so the required checks would never report on it.

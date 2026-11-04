@@ -1,0 +1,39 @@
+# Keeps a release PR open with the next version and its CHANGELOG.md entry, worked out from the PR
+# titles merged to main (feat: minor, fix: patch, other types: no release). Merging that PR tags
+# vX.Y.Z and publishes the GitHub release.
+name: release
+
+on:
+  push:
+    branches: [main]
+  # Every merge can count, so no path filter. No manual or scheduled runs.
+
+# GITHUB_TOKEN isn't used: the App token below does all the writing.
+permissions: {}
+
+# One run at a time, so two runs never update the release PR or create a release together.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release PR
+    runs-on: ubuntu-latest
+    steps:
+      # A PR opened with GITHUB_TOKEN runs no workflows, so the required checks (test, Docs build)
+      # would never report and the release PR could never merge. An App token can.
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write           # the release PR's branch, the tag and the release
+          permission-pull-requests: write      # the release PR
+          permission-issues: write             # its "autorelease:" labels
+
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app.outputs.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

@@ -1,4 +1,4 @@
-# AI Agent Instructions
+# For AI Agents
 
 ## Project overview
 
@@ -20,7 +20,8 @@ Keep the existing public behavior and Home Assistant contracts stable unless a c
 - `docs/` --- documentation site source (Material for MkDocs), published at <https://ha-flichub-module.blunan.com/>. `docs/requirements.in` and `docs/requirements.txt` lock its build tool.
 - `mkdocs.yml` --- documentation site configuration.
 - `flic-button.yaml` --- Home Assistant automation blueprint; its event contract must stay aligned with the module.
-- `.github/workflows/` --- CI workflows: `test.yml` (lint and coverage) and `docs.yml` (docs build and GitHub Pages deploy).
+- `.github/workflows/` --- CI workflows: `test.yml` (lint and coverage), `docs.yml` (docs build and GitHub Pages deploy), and `release.yml` (release-please).
+- `release-please-config.json`, `.release-please-manifest.json`, `CHANGELOG.md` --- release automation; see [Versions and releases](#versions-and-releases).
 - `package.json` --- development scripts and Jest configuration.
 - `eslint.config.js` --- lint rules, including runtime-global restrictions.
 - `.devcontainer/` --- supported development environment.
@@ -175,11 +176,28 @@ Before finishing a change:
 
 ## Release & GitHub
 
-- Always use Conventional Commits.
-- The version is specified in `flic_hub_module/module.json` and `package.json`; update them together.
+- Always use Conventional Commits spec.
+- The version is specified in `flic_hub_module/module.json`, `package.json`, and `package-lock.json`. release-please updates them together; do not bump them by hand.
 - Do not commit generated coverage output, local environment files, personal configuration, secrets or credentials.
 - Keep pull requests focused and explain any intentional compatibility impact.
 - Real-hardware verification must be performed manually: paste the module into the Flic Online IDE, press the buttons, and monitor the console and corresponding Home Assistant entities (`binary_sensor.flic_<addr>`, `sensor.flic_<addr>_battery`, `binary_sensor.flic_<addr>_connectivity`).
+
+### Versions and releases
+
+`main` takes squash merges only, so a PR's title becomes its commit on `main`, and release-please reads that title to pick the next version. A new version means what users install (the module or the blueprint) changed:
+
+- `feat:`: new or changed behavior. Minor version.
+- `fix:`, `perf:`, `revert:`: a bug fix, a performance improvement, or a reverted change. Patch version.
+- `feat!:` / `fix!:`, or a `BREAKING CHANGE:` footer: a change that breaks existing setups, including any intentional change to the Home Assistant contract. Major version.
+- `docs:`, `ci:`, `chore:`, `refactor:`, `test:`, `build:`, `style:`: no version. Use these when what users install stays the same.
+
+Renovate titles its updates `chore(deps):`, because the module has no dependencies, so they release nothing.
+
+The `release` workflow (`.github/workflows/release.yml`) runs release-please on every push to `main`. It keeps a release PR open (`chore(main): release X.Y.Z`) with the next version and its `CHANGELOG.md` entry. Merging that PR by hand, when the version should go out, tags `vX.Y.Z` and publishes the GitHub release. The workflow uses a GitHub App token (`RELEASE_APP_CLIENT_ID` variable, `RELEASE_APP_PRIVATE_KEY` secret), not `GITHUB_TOKEN`, because a PR opened with `GITHUB_TOKEN` runs no workflows and the required checks (`test`, `Docs build`) would never report.
+
+- Don't edit `CHANGELOG.md` or `.release-please-manifest.json` by hand; release-please updates them in its release PR.
+- To correct a merged PR's type before its release, add the corrected message to that PR's description between a `BEGIN_COMMIT_OVERRIDE` line and an `END_COMMIT_OVERRIDE` line; release-please reads it instead of the commit. To force a version, end that message with a `Release-As: X.Y.Z` footer.
+- Don't start a paragraph in a commit body with `feat:`, `fix:` or another type: release-please reads it as another commit.
 
 ## Security and Guardrails
 
