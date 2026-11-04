@@ -175,7 +175,7 @@ describe("request headers and trust store", () => {
 
 // The response callback's only effect is logging, so these tests spy on the logger
 // methods. They assert the severity each outcome is routed to, and that the auth token
-// never appears in a logged message, but never the text itself (see test/README.md).
+// never appears in a logged message, but never the text itself (see docs/testing.md).
 describe("response handling", () => {
 	const button = { bdaddr: ADDR, name: null };
 	const send = (method) => (method === "DELETE" ? ha.sendRemovedState(button) : ha.sendButtonState(button, "on"));

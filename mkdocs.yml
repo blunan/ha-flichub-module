@@ -1,0 +1,80 @@
+# MkDocs configuration for https://ha-flichub-module.blunan.com/.
+site_name: Flic Hub Module for Home Assistant
+site_description: Flic Button clicks, battery, and connectivity in Home Assistant, sent straight from your Flic Hub.
+site_url: https://ha-flichub-module.blunan.com/
+repo_url: https://github.com/blunan/ha-flichub-module
+repo_name: blunan/ha-flichub-module
+edit_uri: ""
+copyright: Copyright &copy; 2021 Brayan Luna &middot; MIT
+exclude_docs: |
+  requirements.*
+
+theme:
+  name: material
+  font: false                                  # system fonts (no Google Fonts requests)
+  icon:
+    logo: material/gesture-tap-button
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Follow the system setting
+  features:
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+    - toc.follow
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: [.]
+      check_paths: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Installation: installation.md
+      - Configuration: configuration.md
+      - HTTPS and certificates: https.md
+  - Using it:
+      - Entities: entities.md
+      - Automations and dashboards: examples.md
+      - How the module behaves: behavior.md
+      - Troubleshooting: troubleshooting.md
+  - Development:
+      - How it works: architecture.md
+      - Testing: testing.md
+      - Contributing & releases: development.md

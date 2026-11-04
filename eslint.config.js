@@ -2,7 +2,8 @@ const js = require("@eslint/js");
 const globals = require("globals");
 
 module.exports = [
-	{ ignores: ["coverage/"] },
+	// The docs site's build output and its local Python environment hold third-party JavaScript.
+	{ ignores: ["coverage/", "site/", ".venv/"] },
 	js.configs.recommended,
 	{
 		languageOptions: { ecmaVersion: 2023, sourceType: "commonjs" },

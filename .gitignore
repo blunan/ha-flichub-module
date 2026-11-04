@@ -4,6 +4,10 @@ node_modules/
 # Test / coverage output
 coverage/
 
+# The docs site's build output and its local Python environment (docs/development.md)
+site/
+.venv/
+
 # Logs
 *.log
 npm-debug.log*
