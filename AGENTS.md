@@ -178,8 +178,8 @@ Before finishing a change:
 
 - Always use Conventional Commits spec.
 - The version is specified in `flic_hub_module/module.json`, `package.json`, and `package-lock.json`. release-please updates them together; do not bump them by hand.
-- Do not commit generated coverage output, local environment files, personal configuration, secrets or credentials.
-- Keep pull requests focused and explain any intentional compatibility impact.
+- Never commit generated coverage output, local environment files, personal configuration, secrets or credentials.
+- Keep pull requests focused and document any intentional compatibility changes.
 - Real-hardware verification must be performed manually: paste the module into the Flic Online IDE, press the buttons, and monitor the console and corresponding Home Assistant entities (`binary_sensor.flic_<addr>`, `sensor.flic_<addr>_battery`, `binary_sensor.flic_<addr>_connectivity`).
 
 ### Versions and releases
@@ -202,8 +202,8 @@ The `release` workflow (`.github/workflows/release.yml`) runs release-please on 
 ## Security and Guardrails
 
 - Never commit secrets, credentials, tokens, or private keys.
-- Validate untrusted input at appropriate boundaries.
-- Use parameterized queries and safe APIs for external input.
+- Always validate untrusted input at appropriate boundaries.
+- Always use parameterized queries and safe APIs for external input.
 - Avoid logging sensitive information.
-- Follow least-privilege principles.
-- Do not disable security controls to bypass errors.
+- Always follow least-privilege principles.
+- Never disable security controls to bypass errors.
