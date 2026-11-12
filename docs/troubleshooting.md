@@ -2,7 +2,7 @@
 
 ## Read the console { #logs }
 
-The module writes to the **Console** tab at the bottom of the Flic Hub IDE. Each line has the time (in milliseconds since 1 January 1970, UTC), the level, and the message:
+The module logs to the Flic Hub IDE **Console** tab using the format `<timestamp> : <level> : <message>`:
 
 ```text
 1762200000000 : WARNING : …
@@ -35,9 +35,9 @@ When a request fails, the module logs two lines: the request it tried to send (m
 1762200000000 : ERROR : Request Error (401): {"statusCode":401,"statusMessage":"Unauthorized",…}
 ```
 
-**Without a status code** (`Request Error: …`), the hub couldn't complete the request at all: Home Assistant is down or unreachable from the hub, `SERVER_HOST` points to the wrong address or port, or the HTTPS connection failed. For certificate and handshake errors, see [When the connection fails](https.md#certificate-errors).
+**Without a status code** (`Request Error: …`): the request failed before reaching Home Assistant. Check network connectivity, host address, port, and TLS certificates (see [connection failures](https.md#certificate-errors)).
 
-**With a status code** (`Request Error (401): …`), Home Assistant, or a proxy in front of it, answered with an error:
+**With a status code** (`Request Error (<code>): …`): Home Assistant or an intermediary proxy returned an HTTP error:
 
 | Status | Likely cause |
 |---|---|
@@ -81,11 +81,11 @@ The hub doesn't know the battery level yet. The module sends `unknown` until the
 
 ## Connectivity is `off` but the button works { #connectivity-off }
 
-The hub reports a disconnection when the signal is too weak, when it loses sync with the button, or when the button goes to sleep, so connectivity can turn `off` now and then. A press made while the button is disconnected still arrives if the button reconnects within 15 seconds. If disconnections are frequent and presses get lost, move the hub closer to the button.
+Disconnections occur normally when buttons sleep, lose synchronization, or experience low signal. Presses made while disconnected are delivered if the button reconnects within 15 seconds. If presses drop frequently, reduce the physical distance between the button and the hub.
 
 ## The entities disappeared after Home Assistant restarted { #missing-after-restart }
 
-That's expected: Home Assistant doesn't keep them across its own restarts. Battery and connectivity come back with the next [regular update](behavior.md#regular-updates), and the button state with the next press. To bring them back sooner, lower [`SYNC_TIME`](configuration.md#sync-time).
+REST-managed entities do not persist across Home Assistant restarts. Battery and connectivity restore on the next [regular update](behavior.md#regular-updates); button state restores on the next press. Reduce [`SYNC_TIME`](configuration.md#sync-time) to restore them faster.
 
 ## I can't rename an entity or assign it to an area { #no-unique-id }
 
@@ -100,4 +100,4 @@ The entities are set through the REST API, so they have no unique ID. Rename the
 - What you did, what you expected, and what happened.
 - The console output with `LOG_LEVEL` set to `C.LOG_LEVEL_DEBUG`.
 
-The module never writes your access token to the console, but the output does include your Home Assistant address and your buttons' names and Bluetooth addresses. Redact them if you prefer.
+Access tokens are never logged, but outputs contain Home Assistant addresses and button Bluetooth addresses. Redact them before sharing if desired.

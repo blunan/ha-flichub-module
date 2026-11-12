@@ -2,11 +2,11 @@
 
 ## One event per press { #one-event-per-press }
 
-Flic Buttons sometimes report an extra `single` click when you release the button after a **hold** or a **double** click. The module makes sure each press sends at most one `flic_click` event to Home Assistant, so those phantom clicks never trigger your automations.
+Flic buttons can emit an unintended `single` click upon release after a **hold** or **double** click. The module filters these out, ensuring each physical press sends at most one `flic_click` event to Home Assistant.
 
 ### What the hub reports
 
-The Flic Hub decides the gesture and reports it next to the raw presses and releases:
+The Flic Hub identifies gestures alongside physical press and release events:
 
 ```text
 single   press ─ release ─────── 0.5 s, no second press ───────► single
@@ -20,7 +20,7 @@ A phantom click is an extra `single` after one of these gestures, without a new 
 
 A click reaches Home Assistant only when it passes these rules:
 
-1. **A fresh press cycle is required:** Single and double clicks require a fresh button down and up cycle observed by the module. Clicks arriving before an initial physical press (after module start or reconnect), or extra clicks without a new press (such as a phantom single after a hold or double click), are ignored. Holds fire while pressed and do not require a prior release.
+1. **Fresh press cycle required:** Single and double clicks require a complete down-and-up press cycle observed by the module. Clicks arriving before an initial physical press (after module start or reconnection) or extra clicks without a new press are ignored. Holds trigger while pressed and do not require a prior release.
 2. **Debounce window (`MIN_EVENTS_OFFSET`):** Any click arriving less than [`MIN_EVENTS_OFFSET`](configuration.md#min-events-offset) milliseconds (default: `600`) after the previous accepted event is ignored.
 3. **Hold micro-movement absorption:** Tiny finger movements during a hold can cause some buttons (notably Flic 2) to report rapid down/up pairs. Any press starting within `MIN_EVENTS_OFFSET` of hold activity (the hold itself or its release) is treated as part of that hold, and its clicks are ignored.
 
@@ -36,11 +36,11 @@ Two guarantees remain in effect regardless of filtering decisions:
 
 ## Regular updates { #regular-updates }
 
-Every [`SYNC_TIME`](configuration.md#sync-time) milliseconds (one minute by default), the module sends the battery and connectivity of all your buttons to Home Assistant again, so Home Assistant stays up to date even when no one presses anything. Each update takes two requests per button.
+Every [`SYNC_TIME`](configuration.md#sync-time) milliseconds (default: 1 minute), the module re-publishes battery and connectivity for all buttons (two requests per button), keeping Home Assistant synchronized without button interaction.
 
 ## When the module starts { #module-start }
 
-Whenever the module starts, for example when you start it in the IDE or when **Restart after crash** brings it back, it does this for every button the hub knows about:
+When the module starts (in the IDE or via **Restart after crash**), it executes the following for each paired button:
 
 1. Clears the button's click tracking, so the first click needs a fresh press (rule 1).
 2. Sends the button state as `off`, the battery level, and the connectivity.
@@ -61,8 +61,8 @@ A press made while the button is disconnected reaches the hub if the button reco
 
 ## When Home Assistant restarts { #home-assistant-restarts }
 
-Home Assistant doesn't remember the module's entities across its own restarts. The battery and connectivity entities come back with the next [regular update](#regular-updates); the button's on/off entity comes back the next time the button is pressed or reconnects to the hub. Click events aren't affected: the next click fires as usual.
+Home Assistant does not persist REST-managed entities across restarts. Battery and connectivity entities restore on the next [regular update](#regular-updates); the button on/off state restores on the next press or reconnection. Click events remain unaffected.
 
 ## Removing a button { #removing-a-button }
 
-When you remove a button from the Flic Hub, the module deletes its three entities from Home Assistant. If an entity is already gone, for example after Home Assistant restarted, the module carries on without an error.
+Removing a button from the Flic Hub deletes its three entities from Home Assistant. If an entity is already absent (e.g. after a Home Assistant restart), the module proceeds without error.

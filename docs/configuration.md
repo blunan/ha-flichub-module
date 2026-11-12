@@ -6,7 +6,7 @@ All settings live in `config.js`, which you edit in the Flic Hub IDE. This is th
 --8<-- "flic_hub_module/config.js"
 ```
 
-Values are plain JavaScript: numbers as they are, text between quotes, and `true` or `false` for on/off settings. After changing a value, stop and start the module so it picks up the change.
+Values are standard JavaScript: unquoted numbers, quoted strings, and boolean `true`/`false`. Restart the module after modifying configuration.
 
 | Option | Type | Default | What it does |
 |---|---|---|---|
@@ -24,7 +24,7 @@ Values are plain JavaScript: numbers as they are, text between quotes, and `true
 
 ### `SERVER_HOST` { #server-host }
 
-The URL where Home Assistant is running, as the hub sees it, without a trailing `/`. For example, `https://192.168.1.20:8123` or `http://192.168.1.20:8123`.
+The reachable Home Assistant URL without a trailing slash (e.g. `https://192.168.1.20:8123` or `http://192.168.1.20:8123`).
 
 - Use an address the hub can reach on your network. `localhost` and `127.0.0.1` point at the hub itself, not at Home Assistant.
 - Include the port. Home Assistant listens on `8123` unless you changed it or serve it through a reverse proxy.
@@ -34,9 +34,9 @@ Both `http://` and `https://` work. Which certificate settings you need depends 
 
 ### `SERVER_AUTH_TOKEN` { #server-auth-token }
 
-A [Long-Lived Access Token](installation.md#before-you-start) created from your Home Assistant profile, pasted between the quotes. It must belong to an administrator, since Home Assistant only lets administrators set states and fire events through the API.
+A [Long-Lived Access Token](installation.md#before-you-start) from an administrator account, pasted between quotes. Administrator permissions are required to set entity states and fire events via the API.
 
-The module sends the token with every request and never writes it to the console. Anyone who has it can act as that user in Home Assistant, so keep `config.js` private, and revoke the token from your profile if it leaks.
+The token is sent in request headers and is never logged to the console. Keep `config.js` secure and revoke the token if exposed.
 
 ## Click filtering
 
@@ -68,7 +68,7 @@ Each sync cycle sends two requests per button. A shorter interval restores batte
 
 Battery percentage at or below which the battery sensor displays a warning icon (`mdi:battery-alert`). Default: `10`.
 
-The warning icon applies from 5% up to this threshold (levels below 5% always show `mdi:battery-outline`). Setting it lower than 5 turns off the warning icon. This only affects the icon; the sensor's numeric state remains the reported percentage. See the [battery icon table](entities.md#battery).
+The warning icon applies from 5% up to this threshold (levels below 5% always show `mdi:battery-outline`). Setting it below 5 disables the warning icon. This affects only the icon; the numeric state reports the actual battery percentage. See [battery icons](entities.md#battery).
 
 ## Logging
 
@@ -102,6 +102,6 @@ Enable this if your certificate includes your Home Assistant hostname/IP, and al
 
 ### `CUSTOM_CERTIFICATES` { #custom-certificates }
 
-One or more PEM-formatted certificates to trust (server certificate or CA certificate). To trust multiple certificates, concatenate them. Extraneous whitespace is allowed.
+One or more PEM-formatted certificates to trust (server or CA certificate). Multiple certificates can be concatenated. Extraneous whitespace is ignored.
 
 Because PEM certificates span multiple lines, paste them between backticks (`` `...` ``) in `config.js` rather than single or double quotes. See [Paste it into config.js](https.md#paste-the-certificate).

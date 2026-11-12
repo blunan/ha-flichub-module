@@ -5,8 +5,8 @@ The module runs on your Flic Hub. To install it, create a module in the hub's On
 ## Before you start
 
 - **Pair your buttons** with the Flic Hub. The module picks up every button the hub knows about, including ones you pair later.
-- **Create a Long-Lived Access Token** in Home Assistant: open your [profile](https://www.home-assistant.io/docs/authentication/#your-account-profile), go to the **Security** tab, and select **Create token** under **Long-lived access tokens**. Copy it right away, because Home Assistant shows it only once. The token must belong to an administrator, since Home Assistant only lets administrators set states and fire events through the API.
-- **Check the API integration.** The module uses the [Home Assistant REST API](https://developers.home-assistant.io/docs/api/rest), which the [API integration](https://www.home-assistant.io/integrations/api) provides. It's enabled by default; if you removed `default_config:` from your configuration, add `api:` back.
+- **Create a Long-Lived Access Token** in Home Assistant: open your [profile](https://www.home-assistant.io/docs/authentication/#your-account-profile), go to the **Security** tab, and select **Create token** under **Long-lived access tokens**. Copy it immediately; Home Assistant displays it only once. The token must belong to an administrator to set states and fire events via the API.
+- **Check the API integration:** The module requires the [Home Assistant REST API](https://developers.home-assistant.io/docs/api/rest), provided by the [API integration](https://www.home-assistant.io/integrations/api) (enabled by default). If you removed `default_config:`, add `api:` to `configuration.yaml`.
 - **Note the address** the hub should use to reach Home Assistant, such as `https://192.168.1.20:8123`. If Home Assistant uses a self-signed certificate, read [HTTPS and certificates](https.md) as well.
 
 ## Create the module
@@ -45,12 +45,12 @@ With `LOG_LEVEL` at its default, `C.LOG_LEVEL_WARNING`, the **Console** at the b
 ## Update the module { #update }
 
 1. Stop the module in the IDE.
-2. Replace the contents of every file except `config.js` with the new version, and add any file the new version introduces.
-3. Compare your `config.js` with the new one. If a release adds or renames an option, copy your values into the new file.
+2. Replace all files except `config.js` with the updated versions, and add any newly introduced files.
+3. Compare `config.js` with the updated version; copy your settings over if options were added or renamed.
 4. Start the module again.
 
 The [releases page](https://github.com/blunan/ha-flichub-module/releases) lists what changed in each version.
 
 ## Remove the module
 
-Stop the module and delete it in the IDE. Its entities stay in Home Assistant until Home Assistant restarts, because it doesn't keep states set through the REST API across restarts. To remove a single button's entities right away, remove the button from the hub instead; see [Removing a button](behavior.md#removing-a-button).
+Stop and delete the module in the IDE. Entities remain in Home Assistant until its next restart, as REST-managed states do not persist. To remove a button's entities immediately, unpair it from the hub instead (see [Removing a button](behavior.md#removing-a-button)).

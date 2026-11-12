@@ -145,9 +145,15 @@ See `docs/testing.md` for the authoritative test layout, mock helpers, and detai
 - Keep logs useful and appropriately leveled, but do not make tests depend on volatile log wording.
 - Avoid unrelated refactors in behavior-sensitive event handling or API code.
 
+## Documentation and writing style
+
+- **Concise and direct:** Keep documentation, comments, and instructions clear, readable, and concise. Avoid wordiness, filler phrases, and over-explaining.
+- **Preserve correctness:** Never sacrifice technical precision, edge-case coverage, or contractual details when simplifying language.
+- **Code comments explain "why":** In tests and build files, write comments that explain non-obvious intent, timing considerations, or domain constraints rather than describing self-evident code.
+- **Module must stay comment-free:** Keep `flic_hub_module/*` 100% comment-free. End users paste these files into the Flic Hub IDE, where clean, minimal code is essential. Document module behavior in `docs/` instead.
+
 ## Documentation and change scope
 
-- Keep `flic_hub_module/*` comment-free, users paste these files into the Flic IDE, and many are not programmers. Keep the code as lean and clean as possible. When a change needs explaining, document it outside the code.
 - `README.md` (written for non-programmers) covers setup, configuration, automations, and the dashboard card. Update it when changing those or the Home Assistant event contract.
 - The documentation site in `docs/` covers everything in depth. Update the matching pages in the same change:
   - configuration options: `docs/configuration.md`, and `docs/https.md` for certificates;

@@ -6,7 +6,7 @@ Guidelines for setting up a development environment, checking your changes, work
 
 ### Dev container (recommended)
 
-The dev container provides Node.js 26 and installs the development dependencies when it's created. You need [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+The dev container provides Node.js 26 with all dependencies pre-installed. Requires [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 1. Open the repository in VS Code.
 2. Select **Reopen in Container** when prompted.
@@ -54,7 +54,7 @@ Run both `npm run lint` and `npm run test:coverage` before opening a pull reques
 
 ## Code style
 
-- **Hub runtime, not Node.js:** `flic_hub_module/` runs on the Flic Hub's QuickJS engine. Use only language features it supports and the globals it provides: `console` and the timer functions. Node.js globals and built-in modules, and browser APIs, aren't available. [How it works](architecture.md#principles) has the details.
+- **Hub runtime, not Node.js:** `flic_hub_module/` executes in QuickJS on the Flic Hub. Use only supported language features and provided globals (`console`, timers). Node.js and browser APIs are unavailable. See [Architectural principles](architecture.md#principles).
 - **CommonJS:** `require` and `exports`, as in the existing files.
 - **Strict equality:** `===` and `!==`, except `== null` to check for both `null` and `undefined`.
 - **No comments in `flic_hub_module/`:** users paste these files into the Flic Hub IDE, and many aren't programmers. Explain changes in the docs instead.
@@ -69,7 +69,7 @@ The Jest suite mocks the hub's `buttons` and `http` modules, so the module's fil
 
 ## Working on documentation { #documentation }
 
-The documentation is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/` and `mkdocs.yml`, and published at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/). The README stays the place for setup, configuration, and usage, written for non-programmers; this site covers everything in depth.
+Documentation is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/` and `mkdocs.yml`, published at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/). The README covers quick setup and usage for end users; the docs site provides comprehensive reference.
 
 To preview it locally:
 

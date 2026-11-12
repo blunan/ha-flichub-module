@@ -1,6 +1,6 @@
 # Entities
 
-The module creates three entities for every button the hub knows about. Their IDs come from the button's Bluetooth address with the colons removed, so a button with the address `80:e4:da:77:9f:c7` gets:
+The module creates three entities for each paired button. Entity IDs derive from the button's Bluetooth address without colons (`flic_<address>`):
 
 | Entity | Shows | States |
 |---|---|---|
@@ -19,7 +19,7 @@ Clicks don't have an entity: they fire a [`flic_click` event](examples.md#flic-c
 
 ## Button state { #button-state }
 
-`binary_sensor.flic_<address>` turns `on` the moment you press the button and `off` when you release it. It always follows the physical button, even when the module [ignores a click](behavior.md#one-event-per-press). It's set to `off` when the module starts and whenever the button connects to the hub.
+`binary_sensor.flic_<address>` turns `on` while pressed and `off` when released. It tracks the physical button directly, even when a click event is [ignored](behavior.md#one-event-per-press). It initializes to `off` on module start and button reconnection.
 
 | Attribute | Value |
 |---|---|
@@ -48,7 +48,7 @@ Setting `WARNING_BATTERY_LEVEL` lower than 5 turns the warning icon off.
 
 ## Connectivity { #connectivity }
 
-`binary_sensor.flic_<address>_connectivity` is `on` while the hub has a verified connection to the button and `off` otherwise. The hub reports a disconnection when the signal is too weak, when it loses sync with the button, or when the button goes to sleep, so an `off` now and then is normal.
+`binary_sensor.flic_<address>_connectivity` is `on` when the connection is verified and `off` otherwise. Intermittent disconnections are normal when buttons sleep, lose sync, or experience weak signal.
 
 | Attribute | Value |
 |---|---|
@@ -64,11 +64,11 @@ Setting `WARNING_BATTERY_LEVEL` lower than 5 turns the warning icon off.
 | Battery | The module starts, the button connects, and every [`SYNC_TIME`](configuration.md#sync-time) |
 | Connectivity | The module starts, the button connects or disconnects, the connection is verified, and every `SYNC_TIME` |
 
-Home Assistant doesn't keep these entities across its own restarts. The battery and connectivity entities come back at the next regular update; the button state comes back the next time the button is pressed or reconnects. See [When Home Assistant restarts](behavior.md#home-assistant-restarts).
+Entities do not persist across Home Assistant restarts. Battery and connectivity restore on the next regular update; button state restores on the next press or reconnection. See [When Home Assistant restarts](behavior.md#home-assistant-restarts).
 
 ## No unique ID { #no-unique-id }
 
-The module creates entities via the Home Assistant REST API rather than an integration registry, so Home Assistant reports that they have no unique ID. You cannot rename them, customize their icons, or assign them to areas through the Home Assistant UI.
+Entities created via the REST API do not have unique IDs in Home Assistant, preventing UI renaming, custom icons, or area assignments.
 
 - To change display names, rename the button in the Flic app.
 - To customize titles, labels, or icons on your dashboard, configure them directly in your dashboard card (see [Automations and dashboards](examples.md#dashboard)):

@@ -12,7 +12,7 @@ This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your F
 
 > 📖 **Full documentation at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/):** HTTPS certificates, how clicks are filtered, every entity in detail, more automation examples, and troubleshooting.
 
-> If you have any automations running with the **flicd add-on** from [pschmitt's addon](https://github.com/pschmitt/home-assistant-addons) they will continue to work after pairing the same Flic Button to the Flic Hub, as the events sent by the module keep the same [type and data](https://www.home-assistant.io/integrations/flic) (`button_name`, `button_address` and `click_type`; only `queued_time` is not sent).
+> Automations using [pschmitt's flicd add-on](https://github.com/pschmitt/home-assistant-addons) continue to work after pairing buttons to the Flic Hub: this module emits the same event [type and data](https://www.home-assistant.io/integrations/flic) (`button_name`, `button_address`, and `click_type`; only `queued_time` is omitted).
 
 ## ✨ Features
 
@@ -33,7 +33,7 @@ This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your F
 
 ## 🔧 Set up
 
-First you need to create a module on your Flic Hub using their [Online IDE](https://hubsdk.flic.io) and copy-paste the files under `flic_hub_module` folder:
+Create a module on your Flic Hub in the [Online IDE](https://hubsdk.flic.io) and copy the files from the `flic_hub_module` folder:
 * `config.js`
 * `constants.js`
 * `ha.js`
@@ -46,7 +46,7 @@ It should look something like this:
 
 ![Flic Hub Online IDE](./docs/assets/FlicHubOnlineIDE.png?raw=true "Flic Hub Online IDE")
 
-Then edit the `config.js` file so the Flic Hub can connect to your Home Assistant REST API.
+Then edit `config.js` to connect the Flic Hub to your Home Assistant instance.
 
 | Param                    | Default | Description |
 | :----------------------- | :-----: | :---------- |
@@ -60,13 +60,13 @@ Then edit the `config.js` file so the Flic Hub can connect to your Home Assistan
 | `VERIFY_CERTIFICATE`     | `false` | When using custom certificates, checks that `SERVER_HOST` matches the certificate's SAN hostname. |
 | `CUSTOM_CERTIFICATES`    | `''`    | One or more PEM certificates to trust when `USE_CUSTOM_CERTIFICATE` is `true`. |
 
-> ⚠️ Be sure you have the **API** component enabled in your Home Assistant instance (enabled by default). In case you have any troubles see their [documentation](https://www.home-assistant.io/integrations/api) to know how to enable it.
+> ⚠️ Home Assistant requires the **API** integration (enabled by default). See the [Home Assistant API documentation](https://www.home-assistant.io/integrations/api) if needed.
 
-Using HTTPS with a self-signed certificate or your own certificate authority? See [HTTPS and certificates](https://ha-flichub-module.blunan.com/https/). The [configuration guide](https://ha-flichub-module.blunan.com/configuration/) describes every option in detail, and the [installation guide](https://ha-flichub-module.blunan.com/installation/) also covers checking that it works and updating the module.
+For self-signed certificates or private CAs, see [HTTPS and certificates](https://ha-flichub-module.blunan.com/https/). See the [configuration guide](https://ha-flichub-module.blunan.com/configuration/) for parameter details and the [installation guide](https://ha-flichub-module.blunan.com/installation/) for verification and update steps.
 
 ## 🤖 Run automations with your Flics
 
-To run automations using `flic_click` events your scripts should look like this:
+Example automation triggered by `flic_click` events:
 
 ```yaml
 automation:
@@ -83,19 +83,19 @@ automation:
           entity_id: group.lights_living_room
 ```
 
-Where the possible values for **click_type** are: `single`, `double` and `hold`. Each event also carries `button_address`, the button's Bluetooth address (e.g. `80:e4:da:77:9f:c7`).
+Supported `click_type` values are `single`, `double`, and `hold`. Each event also includes `button_address`, the button's Bluetooth address (e.g. `80:e4:da:77:9f:c7`).
 
-Each press fires at most one event: the module drops the phantom clicks some buttons report after a hold or a double click. After the module starts or a button reconnects, press the button once before clicks flow — see [How the module behaves](https://ha-flichub-module.blunan.com/behavior/).
+Each physical press fires at most one event; duplicate clicks after holds or double clicks are filtered out. After starting the module or reconnecting a button, press it once to initialize click processing — see [How the module behaves](https://ha-flichub-module.blunan.com/behavior/).
 
-Alternatively import and use the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10 or newer):
+Or import the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10+):
 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fblunan%2Fha-flichub-module%2Fblob%2Fmain%2Fflic-button.yaml)
 
-More [automation examples](https://ha-flichub-module.blunan.com/examples/): every click type in one automation, acting while a button is held, and testing without pressing a button.
+See [automation examples](https://ha-flichub-module.blunan.com/examples/) for multi-action automations, press-and-hold dimming, and manual event testing.
 
 ## 📇 Flic button card
 
-It is possible to add a card to your dashboard to check **state**, **battery** and **connectivity** status for your flics:
+Add an entities card to check button **state**, **battery**, and **connectivity**:
 
 ![Flic Button Card](./docs/assets/FlicButtonCard.png?raw=true "Flic Button Card")
 
@@ -108,7 +108,7 @@ entities:
   - entity: binary_sensor.flic_80e4da779fc7_connectivity
 ```
 
-See [Entities](https://ha-flichub-module.blunan.com/entities/) for every state, attribute, and icon, and why the entities can't be renamed from the Home Assistant UI.
+See [Entities](https://ha-flichub-module.blunan.com/entities/) for states, attributes, icons, and UI renaming limitations.
 
 ## 📖 Documentation
 
