@@ -32,9 +32,8 @@ describe("getButtonFriendlyName", () => {
 	});
 });
 
-// The only mdi:battery-* icons that actually exist. Notably absent: mdi:battery-0
-// and mdi:battery-100 — mdi:battery-outline and mdi:battery stand in for those two
-// buckets, which is why getBatteryIcon's outer bounds are 5 and 95 rather than 0 and 100.
+// Valid mdi:battery-* icons. mdi:battery-outline and mdi:battery represent 0% and 100%,
+// bounding getBatteryIcon's rounded decade icons between 5 and 95.
 const VALID_BATTERY_ICONS = [
 	"mdi:battery",
 	"mdi:battery-outline",
@@ -52,25 +51,21 @@ const VALID_BATTERY_ICONS = [
 ];
 
 describe("getBatteryIcon", () => {
-	// getBatteryIcon reads CFG.WARNING_BATTERY_LEVEL on every call, so the threshold can be
-	// varied per test rather than per module instance.
+	// getBatteryIcon reads CFG.WARNING_BATTERY_LEVEL dynamically, allowing per-test overrides.
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
 
 	const setWarningLevel = (level) => jest.replaceProperty(CFG, "WARNING_BATTERY_LEVEL", level);
 
-	// Verify non-numeric or missing battery levels fall back to mdi:battery-unknown
-	// instead of producing an unresolvable 'mdi:battery-NaN'.
+	// Missing or non-numeric battery levels fall back to mdi:battery-unknown.
 	const UNUSABLE_LEVELS = [C.BATTERY_STATE_UNKNOWN, "unavailable", undefined, null, NaN, {}];
 
-	// A threshold of 0 empties the alert band ([5, 0] has no members), leaving the
-	// level->icon rounding as the only thing under test.
+	// A threshold of 0 disables the alert band ([5, 0]), testing rounding only.
 	describe("rounding (warning band disabled)", () => {
 		beforeEach(() => setWarningLevel(0));
 
-		// The x5 rows round up to the next icon; under the old parseInt(level / 10) * 10
-		// behaviour they floored to the decade below.
+		// Midpoint values (5, 15, 55, 85, etc.) round up to the next decade icon.
 		test.each([
 			[0, "mdi:battery-outline"],
 			[4, "mdi:battery-outline"],
@@ -90,7 +85,7 @@ describe("getBatteryIcon", () => {
 	});
 
 	describe("warning band", () => {
-		// 5 and 8 would otherwise round to mdi:battery-10; the warning band wins.
+		// Warning band [5, WARNING_BATTERY_LEVEL] takes precedence over standard rounding.
 		test("spans [5, WARNING_BATTERY_LEVEL] inclusive", () => {
 			setWarningLevel(8);
 			expect(utils.getBatteryIcon(5)).toBe("mdi:battery-alert");
@@ -116,8 +111,7 @@ describe("getBatteryIcon", () => {
 		expect(utils.getBatteryIcon(level)).toBe("mdi:battery-unknown");
 	});
 
-	// Unusable levels are left out: they return before the threshold is read, and the
-	// test above already pins them to the exact icon.
+	// Non-numeric levels return early and are tested separately above.
 	test.each([0, 5, 8, 10, 25, 95])(
 		"never emits an icon outside the real MDI set (WARNING_BATTERY_LEVEL = %i)",
 		(warningLevel) => {
@@ -136,8 +130,7 @@ describe("getConnectivityIcon", () => {
 	});
 });
 
-// utils.js only stores state; deciding what a press means (arming, the hold
-// continuation) is main.js's job.
+// utils.js stores state; gesture interpretation belongs to main.js.
 describe("per-button state", () => {
 	beforeEach(() => {
 		jest.useFakeTimers();

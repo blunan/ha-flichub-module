@@ -59,8 +59,7 @@ describe("sendButtonBatteryState", () => {
 		expect(content.attributes.friendly_name).toBe(NAME + " Battery");
 	});
 
-	// 50 maps to mdi:battery-50 under any plausible getBatteryIcon policy, so this stays a
-	// test of ha.js's wiring rather than of the icon thresholds (which utils.test.js covers).
+	// Uses 50% to test ha.js wiring independently of icon threshold rules.
 	test("reports a known battery level with the matching icon", () => {
 		ha.sendButtonBatteryState({ bdaddr: ADDR, name: null, batteryStatus: 50 });
 
@@ -101,8 +100,7 @@ describe("sendButtonConnectivityState", () => {
 });
 
 describe("sendButtonEvent", () => {
-	// The payload is matched whole: it mirrors HA's flic integration event data, which
-	// flicd-era automations depend on, so a renamed or extra key must fail here.
+	// Matches full payload against HA's flic integration schema to preserve compatibility.
 	test("POSTs to /api/events/flic_click with exactly the flic integration's event data", () => {
 		ha.sendButtonEvent({ bdaddr: ADDR, name: "Kitchen" }, "double");
 
@@ -118,7 +116,7 @@ describe("sendButtonEvent", () => {
 });
 
 describe("sendRemovedState", () => {
-	// buttonDeleted carries only the bdaddr, so that must be enough.
+	// buttonDeleted provides only bdaddr.
 	test("issues exactly three DELETEs for the button's entities", () => {
 		ha.sendRemovedState({ bdaddr: ADDR });
 
@@ -154,8 +152,7 @@ describe("request headers and trust store", () => {
 		}
 	});
 
-	// Both VERIFY_CERTIFICATE values are run so validateHostname is shown to follow the
-	// setting rather than happen to match a hard-coded value.
+	// Verifies that validateHostname dynamically follows VERIFY_CERTIFICATE.
 	test.each([true, false])("enabling USE_CUSTOM_CERTIFICATE attaches the custom trust store (VERIFY_CERTIFICATE = %p)", (verify) => {
 		jest.replaceProperty(CFG, "USE_CUSTOM_CERTIFICATE", true);
 		jest.replaceProperty(CFG, "VERIFY_CERTIFICATE", verify);
@@ -170,9 +167,8 @@ describe("request headers and trust store", () => {
 	});
 });
 
-// The response callback's only effect is logging, so these tests spy on the logger
-// methods. They assert the severity each outcome is routed to, and that the auth token
-// never appears in a logged message, but never the text itself (see docs/testing.md).
+// Tests spy on logger methods to verify log severity and token redaction
+// without asserting on volatile message text (see docs/testing.md).
 describe("response handling", () => {
 	const button = { bdaddr: ADDR, name: null };
 	const send = (method) => (method === "DELETE" ? ha.sendRemovedState(button) : ha.sendButtonState(button, "on"));

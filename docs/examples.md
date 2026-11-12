@@ -87,7 +87,7 @@ Match on `button_address` instead of `button_name` if you prefer. Quote the addr
 
 ### While the button is held { #while-held }
 
-The button's binary sensor stays `on` for as long as you hold it, so a `hold` can drive an action until you let go. This one dims the lights step by step while the button is held:
+Because the button's binary sensor remains `on` while held, a `hold` event can repeat an action until release. This example steps down brightness while held:
 
 ```yaml
 automation:
@@ -125,7 +125,7 @@ When you create an automation from it, fill in:
 - **Flic Button Name:** the button's `button_name`, such as `flic_80e4da779fc7`.
 - **Single Click Action**, **Double Click Action**, and **Hold Action:** what each gesture does. Leave any of them empty to ignore that gesture.
 
-The automation runs in `single` mode: while one of its actions is still running, Home Assistant ignores new clicks for it.
+The automation runs in `single` mode, ignoring new clicks while an action is executing.
 
 ??? example "The blueprint (`flic-button.yaml`)"
 
@@ -170,6 +170,6 @@ Because the entities [can't be renamed from the UI](entities.md#no-unique-id), s
 
 ## Coming from the flicd add-on { #coming-from-flicd }
 
-Automations written for the **flicd** add-on from [pschmitt's add-ons](https://github.com/pschmitt/home-assistant-addons) keep working after you pair the same Flic Buttons with the Flic Hub. The module fires the same [event type and data](https://www.home-assistant.io/integrations/flic): `flic_click` with `button_name`, `button_address`, and `click_type`.
+Automations written for [pschmitt's flicd add-on](https://github.com/pschmitt/home-assistant-addons) remain compatible. The module emits identical [event types and payload data](https://www.home-assistant.io/integrations/flic): `flic_click` with `button_name`, `button_address`, and `click_type`.
 
 Only `queued_time` isn't sent. Automations that use it need a different approach.

@@ -1,6 +1,6 @@
 # How it works
 
-The module is plain JavaScript that runs on the Flic Hub, not in Node.js. The hub's runtime is based on QuickJS and supports most of ES2023, with CommonJS modules. The module listens to the hub's `buttons` module and calls the Home Assistant REST API through the hub's `http` module. Both are documented in the [Flic Hub SDK](https://hubsdk.flic.io/static/documentation/).
+The module is CommonJS JavaScript running in the Flic Hub's QuickJS environment (supporting most of ES2023). It listens for button events via `buttons` and communicates with the Home Assistant REST API via `http`, as documented in the [Flic Hub SDK](https://hubsdk.flic.io/static/documentation/).
 
 ## Code map
 
@@ -34,7 +34,7 @@ main.js ──► ha.js ─────► http        (hub)
 
 ## Button events { #button-events }
 
-SDK event objects carry only the button's `bdaddr` and the click flags, so handlers look up the full button with `getButton(bdaddr)`. The exception is `buttonDeleted`, which only needs the address.
+SDK events include only `bdaddr` and click flags; handlers look up the full button object using `getButton(bdaddr)`. `buttonDeleted` requires only `bdaddr`.
 
 | SDK event | Click state | Sent to Home Assistant |
 |---|---|---|
@@ -95,7 +95,7 @@ after reconnect  connected (reset) → single (rule 1: ignored)
 
 ## Home Assistant requests { #home-assistant-requests }
 
-Every request goes through `notifyHomeAssistant()` in `ha.js`. It adds `Authorization: Bearer <SERVER_AUTH_TOKEN>` and `Content-Type: application/json` headers. With `USE_CUSTOM_CERTIFICATE` on, it also adds a `customTrustStore` with `certList: CUSTOM_CERTIFICATES` and `validateHostname: VERIFY_CERTIFICATE`.
+All requests route through `notifyHomeAssistant()` in `ha.js`, which attaches bearer token and JSON headers. When `USE_CUSTOM_CERTIFICATE` is enabled, it configures `customTrustStore` with `CUSTOM_CERTIFICATES` and `VERIFY_CERTIFICATE`.
 
 `<address>` below is the button's `bdaddr` without colons:
 
@@ -117,7 +117,7 @@ The response callback picks the log level:
 | HTTP status of 400 or more, except `404` for a `DELETE` | `error`: the request and the response |
 | Anything else | `debug`: the request and the response |
 
-The logged request is rebuilt from the method, URL, and body only, so the token, which travels in a header, never reaches the console. The tests check this.
+Logged requests reconstruct only the method, URL, and body, ensuring bearer tokens in headers are never logged.
 
 ## Architectural principles { #principles }
 

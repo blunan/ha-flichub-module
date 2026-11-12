@@ -1,12 +1,9 @@
-// main.js runs side effects at require time: it initializes the known buttons,
-// starts the sync interval, and registers the buttonManager event handlers. So
-// the mocks (fake timers, mocked `ha`, pinned config, seeded buttons) are set up
-// first, then main.js is required exactly once in beforeAll. The buttonManager
-// mock captures the handlers, which the tests invoke via `__fire`.
+// main.js executes side effects at require time (initial sync, interval start,
+// and event registration). Mocks and fake timers are configured before requiring
+// it once in beforeAll. Handlers are captured by the mock and fired via `__fire`.
 
 jest.mock("../flic_hub_module/ha.js");
-// Pin config defaults so timing tests stay isolated from user-edited deployments,
-// and silence console logs during tests.
+// Pin config defaults and silence logs to isolate timing tests.
 jest.mock("../flic_hub_module/config", () => ({
 	...jest.requireActual("../flic_hub_module/config"),
 	MIN_EVENTS_OFFSET: 600,
@@ -29,9 +26,8 @@ const buttonB = { bdaddr: "80:e4:da:11:22:33", name: null, batteryStatus: null, 
 // Event tests use distinct bdaddrs so the module-level utils state stays isolated.
 const mkButton = (bdaddr, extra) => Object.assign({ bdaddr, name: null, batteryStatus: 50, ready: true }, extra);
 
-// Gesture helpers. The firmware reports single/double only after release (plus its
-// double-click wait), while hold fires during the press. The clock is moved with
-// setSystemTime, not advanceTimersByTime, so the SYNC_TIME interval never fires mid-test.
+// Gesture helpers. Single/double report after release; hold fires during press.
+// Use setSystemTime to prevent SYNC_TIME interval execution during timing tests.
 const PRESS_MS = 100;
 const CLICK_REPORT_MS = 300;
 const advance = (ms) => jest.setSystemTime(Date.now() + ms);
@@ -83,8 +79,7 @@ describe("on load", () => {
 
 describe("periodic sync", () => {
 	test("every SYNC_TIME tick reports battery and connectivity of the current buttons, but not state", () => {
-		// The list differs from the one seen at load (buttonB removed, buttonC paired
-		// since), so the sync must re-read it on every tick.
+		// Dynamically updated button list proves sync re-evaluates buttons on each tick.
 		const buttonC = mkButton("aa:aa:aa:00:00:20");
 		buttonManager.__setButtons([buttonA, buttonC]);
 		// Two ticks: proves the sync recurs (setInterval), not a one-shot.
@@ -119,8 +114,7 @@ describe("button lifecycle events", () => {
 		utils.setButtonEventTimestamp(b, 999); // seed so the removal is observable
 		utils.setButtonEventEmitted(b, C.CLICK_HOLD);
 
-		// Like the SDK, the event carries only the bdaddr, and the button is no
-		// longer known to getButton.
+		// Matches SDK behavior: event carries only bdaddr, and button is removed from getButton.
 		fire("buttonDeleted", b);
 
 		expect(ha.sendRemovedState).toHaveBeenCalledWith({ bdaddr: b.bdaddr });
@@ -167,8 +161,7 @@ describe("button lifecycle events", () => {
 		expect(utils.getButtonEventEmitted(b)).toBe(C.CLICK_WAITING);
 	});
 
-	// A (re)connect zeroes pressedTimestamp, so the release of a press that started
-	// before the re-init cannot arm the cycle.
+	// Reconnection resets pressedTimestamp, preventing pre-connection presses from arming clicks.
 	test("buttonUp of a press that started before a (re)connect turns the state off but stays 'none'", () => {
 		const b = mkButton("aa:aa:aa:00:00:16");
 		buttonManager.__addButton(b);
@@ -182,8 +175,7 @@ describe("button lifecycle events", () => {
 		expect(utils.getButtonEventEmitted(b)).toBe(C.CLICK_NONE);
 	});
 
-	// Hold fires while the button is still pressed, so its spurious release 'single'
-	// can arrive after the hold event. buttonUp re-anchors the window at release time.
+	// Hold fires while pressed; buttonUp re-anchors the timestamp to filter the trailing release click.
 	test("the release of a hold keeps the 'hold' state and re-anchors the timestamp", () => {
 		const holdTime = 1_700_000_600_000;
 		const b = mkButton("aa:aa:aa:00:00:0d");
@@ -243,8 +235,7 @@ describe("buttonSingleOrDoubleClickOrHold", () => {
 		down(b); advance(PRESS_MS); up(b);
 		advance(CLICK_REPORT_MS);
 		clickEvent(b, DOUBLE);
-		// Move past the time window so ONLY the click state can suppress the
-		// duplicate — otherwise this test stays green without the feature.
+		// Advance past MIN_EVENTS_OFFSET so suppression relies solely on gesture state checks.
 		advance(CFG.MIN_EVENTS_OFFSET);
 		clickEvent(b, SINGLE);
 
@@ -272,8 +263,7 @@ describe("buttonSingleOrDoubleClickOrHold", () => {
 		expect(sentClickTypes()).toEqual([C.CLICK_SINGLE]);
 	});
 
-	// The second click lands PRESS_MS + CLICK_REPORT_MS after the first, inside the
-	// window, so only the re-init zeroing the timestamp lets it through.
+	// Reconnection resets eventTimestamp, allowing immediate presses within the previous window.
 	test("the first click after a (re)connect is accepted even within MIN_EVENTS_OFFSET of the last one", () => {
 		const b = mkButton("aa:aa:aa:00:00:0c");
 		buttonManager.__addButton(b);
@@ -299,9 +289,8 @@ describe("buttonSingleOrDoubleClickOrHold", () => {
 	});
 });
 
-// Issue #9: hold fires while the button is pressed; the SDK may add a spurious
-// 'single' on release, and Flic 2 fabricates ~5 ms down/up pairs (plus clicks) from
-// finger micro-movements while the button is held.
+// Issue #9: Holds fire while pressed; SDK may emit a spurious release click,
+// and Flic 2 can emit micro-movement bounce events while held.
 describe("hold", () => {
 	test("a hold is accepted as the first gesture after init; its release single is dropped", () => {
 		const b = mkButton("aa:aa:aa:00:00:19");
@@ -320,9 +309,7 @@ describe("hold", () => {
 		expect(utils.getButtonEventEmitted(b)).toBe(C.CLICK_HOLD);
 	});
 
-	// A reconnect between the hold and its release wipes the state; the release must
-	// not arm the cycle, or the spurious single slips through (the re-init zeroed the
-	// timestamp, so the time window can't catch it either).
+	// Mid-hold reconnect resets state; ensure the release does not arm a trailing spurious single.
 	test("a reconnect between a hold and its release still drops the spurious single", () => {
 		const b = mkButton("aa:aa:aa:00:00:0f");
 		buttonManager.__addButton(b);
@@ -350,8 +337,7 @@ describe("hold", () => {
 		advance(500);
 		up(b); // the hold's own release
 
-		// Each fabricated pair starts well within MIN_EVENTS_OFFSET of the previous
-		// release, yet the stream as a whole spans several windows.
+		// Micro-movement presses arrive within MIN_EVENTS_OFFSET of each release, extending across multiple windows.
 		const start = Date.now();
 		for (let i = 0; i < 6; i++) {
 			advance(CFG.MIN_EVENTS_OFFSET / 3);
@@ -422,10 +408,8 @@ describe("hold", () => {
 	});
 });
 
-// The rest of this file compares against constants.js, so it can't notice a constant
-// whose value changes. These values are what Home Assistant receives and what user
-// automations, the blueprint and flicd-era automations match on, so here they are
-// spelled out as literals.
+// Use literal values for Home Assistant event contracts to prevent silent failures
+// if internal constants change.
 describe("Home Assistant contract", () => {
 	test("gestures reach HA as click types 'single', 'double' and 'hold'", () => {
 		const b = mkButton("aa:aa:aa:00:00:1e");
