@@ -1,8 +1,8 @@
 {
-    "recommendations": [
-        "eamodio.gitlens",
-        "anthropic.claude-code",
-        "editorConfig.EditorConfig",
-        "ms-azuretools.vscode-docker"
-    ]
+	"recommendations": [
+		"eamodio.gitlens",
+		"anthropic.claude-code",
+		"editorConfig.EditorConfig",
+		"ms-azuretools.vscode-docker"
+	]
 }

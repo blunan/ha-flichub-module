@@ -1,31 +1,31 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "group:allNonMajor",
-    "schedule:weekly",
-    ":configMigration"
-  ],
-  "timezone": "America/Mexico_City",
-  "minimumReleaseAge": "14 days",
-  "internalChecksFilter": "strict",
-  "automerge": false,
-  "platformAutomerge": false,
-  "semanticCommits": "enabled",
-  "assignees": ["blun4n"],
-  "ignorePaths": ["docs/requirements.in", "docs/requirements.txt"],
-  "packageRules": [
-    {
-      "description": "Pin GitHub Actions to immutable digests",
-      "matchManagers": ["github-actions"],
-      "pinDigests": true,
-      "groupName": "GitHub Actions"
-    },
-    {
-      "description": "MCR does not publish release timestamps",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["mcr.microsoft.com/**"],
-      "minimumReleaseAgeBehaviour": "timestamp-optional"
-    }
-  ]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		"group:allNonMajor",
+		"schedule:weekly",
+		":configMigration"
+	],
+	"timezone": "America/Mexico_City",
+	"minimumReleaseAge": "14 days",
+	"internalChecksFilter": "strict",
+	"automerge": false,
+	"platformAutomerge": false,
+	"semanticCommits": "enabled",
+	"assignees": ["blun4n"],
+	"ignorePaths": ["docs/requirements.in", "docs/requirements.txt"],
+	"packageRules": [
+		{
+			"description": "Pin GitHub Actions to immutable digests",
+			"matchManagers": ["github-actions"],
+			"pinDigests": true,
+			"groupName": "GitHub Actions"
+		},
+		{
+			"description": "MCR does not publish release timestamps",
+			"matchDatasources": ["docker"],
+			"matchPackageNames": ["mcr.microsoft.com/**"],
+			"minimumReleaseAgeBehaviour": "timestamp-optional"
+		}
+	]
 }
