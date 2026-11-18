@@ -170,7 +170,7 @@ See `docs/testing.md` for the authoritative test layout, mock helpers, and detai
 - Update `docs/testing.md` when changing test helpers, mocks, test layout, or testing conventions.
 - Keep `module.json` consistent with the deployable module.
 
-### Formatting
+### Docs Formatting
 
 Follow these rules on every edit under `docs/`, including files embedded with `--8<--`. They keep pages inside the brand fonts' character set and consistent with the other blunan.com docs sites. Nothing enforces them: apply them by hand.
 
