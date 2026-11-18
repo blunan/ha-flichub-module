@@ -1,12 +1,12 @@
 # Contributing & releases
 
-Guidelines for setting up a development environment, checking your changes, working on the documentation, and releasing new versions.
+This page covers how to set up a development environment, check your changes, work on the documentation, and release new versions.
 
 ## Development setup
 
 ### Dev container (recommended)
 
-The dev container provides Node.js 26 with all dependencies pre-installed. Requires [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+The dev container provides Node.js 26 with all dependencies installed. You need [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 1. Open the repository in VS Code.
 2. Select **Reopen in Container** when prompted.
@@ -28,7 +28,7 @@ For targeted test arguments and watch mode, see [Testing with Docker](testing.md
 |---|---|
 | `npm test` | Runs the Jest suite |
 | `npm run test:coverage` | Runs the suite with coverage, and fails if coverage of `flic_hub_module/` drops below 100% |
-| `npm run lint` | Runs ESLint, which also flags Node.js-only globals (`process`, `Buffer`, …) in `flic_hub_module/` |
+| `npm run lint` | Runs ESLint, which also flags Node.js-only globals such as `process` and `Buffer` in `flic_hub_module/` |
 
 Run both `npm run lint` and `npm run test:coverage` before opening a pull request; CI runs them too.
 
@@ -36,20 +36,20 @@ Run both `npm run lint` and `npm run test:coverage` before opening a pull reques
 
 ```text
 .
-├── .devcontainer/                 Dev container configuration
-├── .github/workflows/             CI: tests, the documentation site, and releases
-├── docs/                          Documentation site source and its locked build tool
-├── flic_hub_module/               The module users paste into the Flic Hub IDE
-├── test/                          Jest tests and the Flic Hub SDK mocks
-├── .release-please-manifest.json  The last released version, kept by release-please
-├── AGENTS.md                      Instructions for AI coding agents
-├── CHANGELOG.md                   What changed in each version, kept by release-please
-├── eslint.config.js               Lint rules, including the hub's runtime globals
-├── flic-button.yaml               Home Assistant automation blueprint
-├── mkdocs.yml                     Documentation site configuration
-├── package.json                   Scripts, development dependencies, and Jest configuration
-├── release-please-config.json     Release settings: changelog sections and version files
-└── renovate.json                  Automated dependency update policy
+|-- .devcontainer/                 Dev container configuration
+|-- .github/workflows/             CI: tests, the documentation site, and releases
+|-- docs/                          Documentation site source and its locked build tool
+|-- flic_hub_module/               The module users paste into the Flic Hub IDE
+|-- test/                          Jest tests and the Flic Hub SDK mocks
+|-- .release-please-manifest.json  The last released version, kept by release-please
+|-- AGENTS.md                      Instructions for AI coding agents
+|-- CHANGELOG.md                   What changed in each version, kept by release-please
+|-- eslint.config.js               Lint rules, including the hub's runtime globals
+|-- flic-button.yaml               Home Assistant automation blueprint
+|-- mkdocs.yml                     Documentation site configuration
+|-- package.json                   Scripts, development dependencies, and Jest configuration
+|-- release-please-config.json     Release settings: changelog sections and version files
+`-- renovate.json                  Automated dependency update policy
 ```
 
 ## Code style
@@ -61,7 +61,7 @@ Run both `npm run lint` and `npm run test:coverage` before opening a pull reques
 - **Formatting:** tabs, LF line endings, and a final newline, as `.editorconfig` sets; YAML uses two spaces.
 - **Home Assistant contract:** entity IDs, the `flic_click` event, its data, and its values are relied on by users' automations. Change them only on purpose, together with the README, these docs, the blueprint, and the contract tests. See [Home Assistant requests](architecture.md#home-assistant-requests).
 - **Credentials:** never log the access token.
-- **Commits:** use [Conventional Commits](https://www.conventionalcommits.org/), such as `fix: …`, `docs: …`, or `chore(deps): …`. A pull request's title decides the next version; see the [release process](#releases).
+- **Commits:** use [Conventional Commits](https://www.conventionalcommits.org/), such as `fix:`, `docs:`, or `chore(deps):`. A pull request's title decides the next version; see the [release process](#releases).
 
 ## Testing
 
@@ -93,6 +93,7 @@ Browse to `http://127.0.0.1:8000`. `mkdocs build --strict` verifies links and an
 - **Links to repository files** outside `docs/` use absolute GitHub URLs: the strict build rejects relative links that leave `docs/`.
 - **Real files are embedded, not copied:** `config.js` and the blueprint appear through [snippets](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/) (`--8<-- "path"`). When you embed another file, add it to the `paths` in `docs.yml` so changes to it redeploy the site.
 - **The README links to the site** with absolute URLs. Give headings it links to an explicit `{ #id }`, so rewording a heading doesn't break the link.
+- **Formatting** follows the [formatting rules in `AGENTS.md`](https://github.com/blunan/ha-flichub-module/blob/main/AGENTS.md#formatting), which nothing enforces. In short: ASCII-only diagrams and program output (`|--` trees, `->` flows), menu paths written as **Settings** > **Devices & services**, one fence language per language (`sh`, `js`, `yaml`, `python`, `json`, `text`), sentence-case headings, one `#` title equal to the nav label followed by a summary paragraph, and plain second-person voice. The rules also cover files embedded with snippets.
 
 ### Updating documentation dependencies { #docs-dependencies }
 

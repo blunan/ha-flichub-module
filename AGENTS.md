@@ -145,14 +145,16 @@ See `docs/testing.md` for the authoritative test layout, mock helpers, and detai
 - Keep logs useful and appropriately leveled, but do not make tests depend on volatile log wording.
 - Avoid unrelated refactors in behavior-sensitive event handling or API code.
 
-## Documentation and writing style
+## Documentation
+
+### Writing style
 
 - **Concise and direct:** Keep documentation, comments, and instructions clear, readable, and concise. Avoid wordiness, filler phrases, and over-explaining.
 - **Preserve correctness:** Never sacrifice technical precision, edge-case coverage, or contractual details when simplifying language.
 - **Code comments explain "why":** In tests and build files, write comments that explain non-obvious intent, timing considerations, or domain constraints rather than describing self-evident code.
 - **Module must stay comment-free:** Keep `flic_hub_module/*` 100% comment-free. End users paste these files into the Flic Hub IDE, where clean, minimal code is essential. Document module behavior in `docs/` instead.
 
-## Documentation and change scope
+### Change scope
 
 - `README.md` (written for non-programmers) covers setup, configuration, automations, and the dashboard card. Update it when changing those or the Home Assistant event contract.
 - The documentation site in `docs/` covers everything in depth. Update the matching pages in the same change:
@@ -167,6 +169,21 @@ See `docs/testing.md` for the authoritative test layout, mock helpers, and detai
 - Update `flic-button.yaml` and its tests when changing the click event contract or automation behavior.
 - Update `docs/testing.md` when changing test helpers, mocks, test layout, or testing conventions.
 - Keep `module.json` consistent with the deployable module.
+
+### Formatting
+
+Follow these rules on every edit under `docs/`, including files embedded with `--8<--`. They keep pages inside the brand fonts' character set and consistent with the other blunan.com docs sites. Nothing enforces them: apply them by hand.
+
+- **Characters:** Latin letters, digits, common punctuation, typographic quotes and dashes only. No box drawing (`├──`), arrows (`→`, `►`) or symbols (`⋮`, `✔`): the brand fonts lack them, so they render in a fallback font and break code-block alignment.
+- **Diagrams:** ASCII in a `text` fence. Trees use `|--`, `` `-- `` and `|`; flows use `->`.
+- **Menu paths:** write **Settings** > **Devices & services**. Name icons in words ("the three-dots menu").
+- **Program output:** keep it ASCII, or paraphrase it.
+- **Code fences:** always name the language, using one name per language: `sh`, `js`, `yaml`, `python`, `json`, and `text` for output and diagrams. Never `bash`, `shell`, `javascript`, `yml`, `txt` or `py`.
+- **Callouts:** only `note`, `abstract`, `info`, `tip`, `success`, `question`, `warning`, `failure`, `danger`, `bug`, `example` and `quote`.
+- **Emphasis:** bold or italic, never both at once.
+- **Headings:** sentence case. Capitalize only the first word, proper nouns and acronyms. Proper nouns here: Flic Hub, Flic Button, Home Assistant and QuickJS.
+- **Page outline:** each page has one `#` title that equals its nav label (the home page uses the project name), a summary paragraph before the first `##`, and heading levels that never skip.
+- **Voice:** plain second person ("you"), steps as commands, present tense; contractions are fine. No filler words (please, simply, just, easy, easily) and no wordplay.
 
 ## Completion checklist
 

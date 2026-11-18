@@ -6,22 +6,23 @@ The module is CommonJS JavaScript running in the Flic Hub's QuickJS environment 
 
 ```text
 flic_hub_module/
-├── main.js        Entry point: initial sync, periodic sync, and the button event handlers
-├── ha.js          Home Assistant REST requests and response logging
-├── utils.js       Entity names, display names, icons, and the per-button click state
-├── logger.js      Log-level filtering and console formatting
-├── constants.js   Click types, states, log levels, and the initial click state
-├── config.js      User settings, edited in the Flic Hub IDE
-└── module.json    Module metadata: name, version, author, and license
+|-- main.js        Entry point: initial sync, periodic sync, and the button event handlers
+|-- ha.js          Home Assistant REST requests and response logging
+|-- utils.js       Entity names, display names, icons, and the per-button click state
+|-- logger.js      Log-level filtering and console formatting
+|-- constants.js   Click types, states, log levels, and the initial click state
+|-- config.js      User settings, edited in the Flic Hub IDE
+`-- module.json    Module metadata: name, version, author, and license
 ```
 
+Each file requires these modules; `buttons` and `http` come from the hub:
+
 ```text
-main.js ──► ha.js ─────► http        (hub)
-   │          ├──► utils.js ──► config.js, constants.js
-   │          └──► logger.js ─► config.js, constants.js
-   ├──► utils.js
-   ├──► logger.js
-   └──► buttons                       (hub)
+main.js    -> ha.js, utils.js, logger.js, config.js, constants.js, buttons
+ha.js      -> utils.js, logger.js, config.js, constants.js, http
+utils.js   -> config.js, constants.js
+logger.js  -> config.js, constants.js
+config.js  -> constants.js
 ```
 
 ## Lifecycle overview { #lifecycle }
@@ -63,7 +64,7 @@ Getters for an unknown button return `C.INITIAL_STATE` without creating an entry
 ### On `buttonUp` { #button-up }
 
 ```text
-if eventEmitted is 'hold' and pressedTimestamp − eventTimestamp < MIN_EVENTS_OFFSET:
+if eventEmitted is 'hold' and pressedTimestamp - eventTimestamp < MIN_EVENTS_OFFSET:
     # the release that ends a hold, or a quick re-press that belongs to it
     if pressedTimestamp >= eventTimestamp: log a warning (a new press inside the hold window)
     eventTimestamp = now                       # the hold window restarts at this release
@@ -76,21 +77,21 @@ send button state off                          # always, whatever the click stat
 
 ```text
 type = single, double, or hold
-1. eventEmitted is 'none' and type is not hold        → ignore: no press since the reset
-2. eventEmitted is not 'waiting' and type is not hold → ignore: no new press since the last event
-3. now − eventTimestamp < MIN_EVENTS_OFFSET           → ignore: too soon
-4. otherwise                                          → accept: eventTimestamp = now,
+1. eventEmitted is 'none' and type is not hold        -> ignore: no press since the reset
+2. eventEmitted is not 'waiting' and type is not hold -> ignore: no new press since the last event
+3. now - eventTimestamp < MIN_EVENTS_OFFSET           -> ignore: too soon
+4. otherwise                                          -> accept: eventTimestamp = now,
                                                          eventEmitted = type, send flic_click
 ```
 
 The comparisons are strict, so a click that arrives exactly `MIN_EVENTS_OFFSET` after the previous one is accepted. Traced through the rules:
 
 ```text
-single           down → up (armed) → single (accepted)
-double           down → up (armed) → down → up → double (accepted) → single (rule 2: ignored)
-hold             down → hold (accepted) → up (hold window restarts) → single (rule 2: ignored)
-re-press         … hold → up → down within MIN_EVENTS_OFFSET → up (stays in the hold, not armed)
-after reconnect  connected (reset) → single (rule 1: ignored)
+single           down -> up (armed) -> single (accepted)
+double           down -> up (armed) -> down -> up -> double (accepted) -> single (rule 2: ignored)
+hold             down -> hold (accepted) -> up (hold window restarts) -> single (rule 2: ignored)
+re-press         ... hold -> up -> down within MIN_EVENTS_OFFSET -> up (stays in the hold, not armed)
+after reconnect  connected (reset) -> single (rule 1: ignored)
 ```
 
 ## Home Assistant requests { #home-assistant-requests }

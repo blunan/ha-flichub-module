@@ -1,11 +1,13 @@
 # Troubleshooting
 
+Start with the console in the Flic Hub IDE: it shows failed requests and why the module ignored a click. This page explains how to read it, then covers the most common problems and how to report one.
+
 ## Read the console { #logs }
 
 The module logs to the Flic Hub IDE **Console** tab using the format `<timestamp> : <level> : <message>`:
 
 ```text
-1762200000000 : WARNING : …
+1762200000000 : WARNING : ...
 ```
 
 How much it writes depends on [`LOG_LEVEL`](configuration.md#log-level):
@@ -24,20 +26,20 @@ Check, in this order:
 4. **The token is right:** pasted in full between the quotes, not revoked, and from an administrator account.
 5. **The API integration is loaded.** It's part of `default_config:`; if you removed that line, add `api:` to `configuration.yaml`.
 
-Then go to **Developer tools → States** in Home Assistant and search for `flic_`.
+Then go to **Developer tools** > **States** in Home Assistant and search for `flic_`.
 
 ## Failed requests { #failed-requests }
 
 When a request fails, the module logs two lines: the request it tried to send (method, URL, and body, never the token) and what went wrong.
 
 ```text
-1762200000000 : ERROR : Request: {"method":"POST","url":"https://192.168.1.20:8123/api/states/binary_sensor.flic_80e4da779fc7","content":"…"}
-1762200000000 : ERROR : Request Error (401): {"statusCode":401,"statusMessage":"Unauthorized",…}
+1762200000000 : ERROR : Request: {"method":"POST","url":"https://192.168.1.20:8123/api/states/binary_sensor.flic_80e4da779fc7","content":"..."}
+1762200000000 : ERROR : Request Error (401): {"statusCode":401,"statusMessage":"Unauthorized",...}
 ```
 
-**Without a status code** (`Request Error: …`): the request failed before reaching Home Assistant. Check network connectivity, host address, port, and TLS certificates (see [connection failures](https.md#certificate-errors)).
+**Without a status code** (`Request Error: ...`): the request failed before reaching Home Assistant. Check network connectivity, host address, port, and TLS certificates (see [connection failures](https.md#certificate-errors)).
 
-**With a status code** (`Request Error (<code>): …`): Home Assistant or an intermediary proxy returned an HTTP error:
+**With a status code** (`Request Error (<code>): ...`): Home Assistant or an intermediary proxy returned an HTTP error:
 
 | Status | Likely cause |
 |---|---|
@@ -48,9 +50,9 @@ When a request fails, the module logs two lines: the request it tried to send (m
 
 A `404` when [removing a button](behavior.md#removing-a-button) is expected and isn't logged as an error: the entity was already gone.
 
-## A click didn't trigger my automation { #ignored-clicks }
+## A click doesn't trigger an automation { #ignored-clicks }
 
-First, find out whether the event reached Home Assistant: in **Developer tools → Events**, listen to `flic_click` and click the button.
+First, find out whether the event reached Home Assistant: in **Developer tools** > **Events**, listen to `flic_click` and click the button.
 
 **If no event arrives**, the module may have ignored the click on purpose. With `LOG_LEVEL` at `C.LOG_LEVEL_WARNING` or higher, the console says why:
 
@@ -69,7 +71,7 @@ First, find out whether the event reached Home Assistant: in **Developer tools �
 - `click_type` is exactly `single`, `double`, or `hold`.
 - The automation is not still running: automations created from the [blueprint](examples.md#blueprint) execute in `single` mode and drop clicks while an action is in progress.
 
-The automation's trace, under **Settings → Automations & scenes**, shows whether it triggered and where it stopped.
+The automation's trace, under **Settings** > **Automations & scenes**, shows whether it triggered and where it stopped.
 
 ## Phantom clicks still trigger automations { #phantom-clicks }
 
@@ -83,15 +85,15 @@ The hub doesn't know the battery level yet. The module sends `unknown` until the
 
 Disconnections occur normally when buttons sleep, lose synchronization, or experience low signal. Presses made while disconnected are delivered if the button reconnects within 15 seconds. If presses drop frequently, reduce the physical distance between the button and the hub.
 
-## The entities disappeared after Home Assistant restarted { #missing-after-restart }
+## Entities are missing after Home Assistant restarts { #missing-after-restart }
 
 REST-managed entities do not persist across Home Assistant restarts. Battery and connectivity restore on the next [regular update](behavior.md#regular-updates); button state restores on the next press. Reduce [`SYNC_TIME`](configuration.md#sync-time) to restore them faster.
 
-## I can't rename an entity or assign it to an area { #no-unique-id }
+## An entity can't be renamed or assigned to an area { #no-unique-id }
 
 The entities are set through the REST API, so they have no unique ID. Rename the button in the Flic app instead, or set a name in your dashboard card. See [No unique ID](entities.md#no-unique-id).
 
-## Reporting issues { #report-a-problem }
+## Report a problem { #report-a-problem }
 
 [Open an issue](https://github.com/blunan/ha-flichub-module/issues) with:
 
@@ -100,4 +102,4 @@ The entities are set through the REST API, so they have no unique ID. Rename the
 - What you did, what you expected, and what happened.
 - The console output with `LOG_LEVEL` set to `C.LOG_LEVEL_DEBUG`.
 
-Access tokens are never logged, but outputs contain Home Assistant addresses and button Bluetooth addresses. Redact them before sharing if desired.
+Access tokens are never logged, but outputs contain Home Assistant addresses and button Bluetooth addresses. Redact them before you share the output if you prefer.

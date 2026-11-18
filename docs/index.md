@@ -16,11 +16,11 @@ Paste seven small files into the hub's [Online IDE](https://hubsdk.flic.io), fil
 ## How it maps
 
 ```text
-Flic Button 80:e4:da:77:9f:c7 ("Gamer")   → Home Assistant
-├── pressed / released                    → binary_sensor.flic_80e4da779fc7
-├── battery level                         → sensor.flic_80e4da779fc7_battery
-├── connected / disconnected              → binary_sensor.flic_80e4da779fc7_connectivity
-└── single / double / hold                → flic_click event
+Flic Button 80:e4:da:77:9f:c7 ("Gamer")  -> Home Assistant
+|-- pressed / released                   -> binary_sensor.flic_80e4da779fc7
+|-- battery level                        -> sensor.flic_80e4da779fc7_battery
+|-- connected / disconnected             -> binary_sensor.flic_80e4da779fc7_connectivity
+`-- single / double / hold               -> flic_click event
 ```
 
 ## Requirements & scope

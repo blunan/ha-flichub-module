@@ -28,7 +28,7 @@ The reachable Home Assistant URL without a trailing slash (e.g. `https://192.168
 
 - Use an address the hub can reach on your network. `localhost` and `127.0.0.1` point at the hub itself, not at Home Assistant.
 - Include the port. Home Assistant listens on `8123` unless you changed it or serve it through a reverse proxy.
-- Don't add a path: the module adds `/api/…` itself.
+- Don't add a path: the module adds `/api/...` itself.
 
 Both `http://` and `https://` work. Which certificate settings you need depends on how Home Assistant is served; see [HTTPS and certificates](https.md).
 

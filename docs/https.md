@@ -1,13 +1,13 @@
 # HTTPS and certificates
 
-Configuration depends on your Home Assistant network and TLS setup:
+The certificate settings in `config.js` depend on how Home Assistant is served. Find your setup in the first table, then follow its section below:
 
 | Home Assistant is served over | `SERVER_HOST` | `USE_CUSTOM_CERTIFICATE` | `VERIFY_CERTIFICATE` | `CUSTOM_CERTIFICATES` |
 |---|---|---|---|---|
-| [Plain HTTP](#plain-http) | `http://…` | `false` | Not used | Not used |
-| [HTTPS with a publicly trusted certificate](#publicly-trusted) | `https://…` | `false` | Not used | Not used |
-| [HTTPS with a self-signed certificate](#self-signed) | `https://…` | `true` | Optional | The server's certificate |
-| [HTTPS with a certificate from your own CA](#own-ca) | `https://…` | `true` | `true` | The CA certificate |
+| [Plain HTTP](#plain-http) | `http://...` | `false` | Not used | Not used |
+| [HTTPS with a publicly trusted certificate](#publicly-trusted) | `https://...` | `false` | Not used | Not used |
+| [HTTPS with a self-signed certificate](#self-signed) | `https://...` | `true` | Optional | The server's certificate |
+| [HTTPS with a certificate from your own CA](#own-ca) | `https://...` | `true` | `true` | The CA certificate |
 
 With `USE_CUSTOM_CERTIFICATE` on, the hub trusts only the certificates in `CUSTOM_CERTIFICATES`, instead of its built-in list of certificate authorities:
 
