@@ -1,0 +1,598 @@
+/* Tokens: light scheme */
+
+[data-md-color-scheme="default"] {
+  --brand-bg: #FAF9F6;
+  --brand-surface: #FFFFFF;
+  --brand-raised: #F0EEEA;
+  --brand-border: #DCD8D1;
+  --brand-text: #16151B;
+  --brand-text-muted: #504D59;
+  --brand-accent: #7E3C00;
+  --brand-accent-2: #5236B1;
+  --brand-on-accent: #FFFFFF;
+  --brand-link: #7E3C00;
+  --brand-focus: #7E3C00;
+  --brand-info: #09508B;
+  --brand-success: #155A32;
+  --brand-warning: #644B00;
+  --brand-danger: #981E25;
+}
+
+/* Tokens: dark scheme */
+
+[data-md-color-scheme="slate"] {
+  --brand-bg: #0E0F14;
+  --brand-surface: #15171E;
+  --brand-raised: #1D1F28;
+  --brand-border: #2E3140;
+  --brand-text: #ECEAE4;
+  --brand-text-muted: #ABA9B6;
+  --brand-accent: #F2A541;
+  --brand-accent-2: #B79CFF;
+  --brand-on-accent: #17120A;
+  --brand-link: #F2A541;
+  --brand-focus: #F2A541;
+  --brand-info: #7CC4FF;
+  --brand-success: #6FD39A;
+  --brand-warning: #EBD25E;
+  --brand-danger: #FF8888;
+}
+
+/* Base colors */
+
+[data-md-color-scheme="default"],
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: var(--brand-bg);
+  --md-default-bg-color--light: color-mix(in srgb, var(--brand-bg) 70%, transparent);
+  --md-default-bg-color--lighter: color-mix(in srgb, var(--brand-bg) 30%, transparent);
+  --md-default-bg-color--lightest: color-mix(in srgb, var(--brand-bg) 12%, transparent);
+  --md-default-fg-color: var(--brand-text);
+  --md-default-fg-color--light: var(--brand-text-muted);
+  --md-default-fg-color--lighter: color-mix(in srgb, var(--brand-text) 32%, transparent);
+  --md-default-fg-color--lightest: color-mix(in srgb, var(--brand-text) 12%, transparent);
+  --md-typeset-color: var(--brand-text);
+  --md-typeset-a-color: var(--brand-link);
+  --md-typeset-mark-color: color-mix(in srgb, var(--brand-accent) 30%, transparent);
+  --md-code-fg-color: var(--brand-text);
+  --md-code-bg-color: var(--brand-raised);
+  --md-code-hl-color: var(--brand-accent);
+  --md-code-hl-color--light: color-mix(in srgb, var(--brand-accent) 12%, transparent);
+  --md-code-hl-keyword-color: var(--brand-accent);
+  --md-code-hl-special-color: var(--brand-accent);
+  --md-code-hl-comment-color: var(--brand-text-muted);
+  --md-code-hl-generic-color: var(--brand-text-muted);
+  --md-code-hl-operator-color: var(--brand-text-muted);
+  --md-code-hl-punctuation-color: var(--brand-text-muted);
+  --md-code-hl-variable-color: var(--brand-text-muted);
+  --md-code-hl-string-color: var(--brand-success);
+  --md-code-hl-number-color: var(--brand-accent-2);
+  --md-code-hl-constant-color: var(--brand-accent-2);
+  --md-code-hl-name-color: var(--brand-text);
+  --md-code-hl-function-color: var(--brand-text);
+  --md-typeset-table-color: var(--brand-border);
+  --md-footer-fg-color: var(--brand-text);
+  --md-footer-fg-color--light: var(--brand-text-muted);
+  --md-footer-fg-color--lighter: var(--brand-text-muted);
+  --md-footer-bg-color: var(--brand-surface);
+  --md-footer-bg-color--dark: var(--brand-bg);
+  --md-admonition-fg-color: var(--brand-text);
+  --md-admonition-bg-color: var(--brand-surface);
+}
+
+/* Primary: Amber (links, active navigation) */
+
+[data-md-color-scheme="default"][data-md-color-primary="custom"],
+[data-md-color-scheme="slate"][data-md-color-primary="custom"] {
+  --md-primary-fg-color: var(--brand-accent);
+  --md-primary-fg-color--light: color-mix(in srgb, var(--brand-accent) 70%, var(--brand-bg));
+  --md-primary-fg-color--dark: color-mix(in srgb, var(--brand-accent) 80%, var(--brand-text));
+  --md-primary-bg-color: var(--brand-on-accent);
+  --md-primary-bg-color--light: color-mix(in srgb, var(--brand-on-accent) 70%, transparent);
+}
+
+/* Accent: Ultraviolet (both generators use it for link hover, so it passes 7:1 as text) */
+
+[data-md-color-scheme="default"][data-md-color-accent="custom"],
+[data-md-color-scheme="slate"][data-md-color-accent="custom"] {
+  --md-accent-fg-color: var(--brand-accent-2);
+  --md-accent-fg-color--transparent: color-mix(in srgb, var(--brand-accent-2) 5%, transparent);
+  --md-accent-bg-color: var(--brand-on-accent);
+  --md-accent-bg-color--light: color-mix(in srgb, var(--brand-on-accent) 70%, transparent);
+}
+
+/* Literal constants (true, false, null) read as values: Material binds `.kc` to the name color */
+
+.md-typeset .highlight .kc {
+  color: var(--md-code-hl-number-color);
+}
+
+/* Calm header: raised surface instead of the classic variant's primary-colored bar */
+
+.md-header,
+.md-tabs {
+  background-color: var(--brand-raised);
+  color: var(--brand-text);
+  --md-primary-bg-color: var(--brand-text);
+  --md-primary-bg-color--light: var(--brand-text-muted);
+}
+
+/* Headings: the site's weights and body text (generators default to light or muted titles) */
+
+.md-typeset h1,
+.md-typeset h2 {
+  font-weight: 700;
+}
+
+.md-typeset h3 {
+  font-weight: 600;
+}
+
+.md-typeset h1 {
+  color: var(--brand-text);
+}
+
+/* Controls the generators draw at low contrast: muted text, Ultraviolet or Amber on hover and focus */
+
+.md-typeset .headerlink {
+  color: var(--brand-text-muted);
+}
+
+.md-typeset .headerlink:hover,
+.md-typeset .headerlink:focus {
+  color: var(--brand-accent-2);
+}
+
+.md-code__button {
+  color: var(--brand-text-muted);
+}
+
+.md-code__button:hover,
+.md-code__button.focus-visible {
+  color: var(--brand-accent);
+}
+
+.md-footer__direction {
+  color: var(--brand-text-muted);
+  opacity: 1;
+}
+
+/* Focus: Amber, as on the site, as a 2px solid ring (WCAG 2.4.13; the generators draw a 1px `auto` outline).
+   `body[…]` outranks Material's `.md-typeset a.focus-visible` (polyfill class) and the toggle label's `auto` style. */
+
+body[data-md-color-scheme] :focus-visible,
+body[data-md-color-scheme] .focus-visible,
+body[data-md-color-scheme] .md-option.focus-visible + label {
+  outline-color: var(--brand-focus);
+  outline-style: solid;
+  outline-width: 2px;
+}
+
+/* Contrast (1.4.6): Material dims these to 70–75% or 12–32% tints, below 7:1 for text and 3:1 for icons */
+
+.md-source__facts {
+  opacity: 1;
+}
+
+.md-header .md-source__facts {
+  color: var(--brand-text-muted);
+}
+
+.md-header__button:hover,
+.md-source:hover,
+.md-search__icon:hover,
+.md-footer__link:focus,
+.md-footer__link:hover,
+.md-banner__button:hover {
+  opacity: 1;
+}
+
+.md-tabs__link {
+  opacity: 1;
+  color: var(--brand-text-muted);
+}
+
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link:hover,
+.md-tabs__link:focus {
+  color: var(--brand-text);
+}
+
+.md-search__suggest,
+.md-typeset .md-content__button,
+.md-clipboard,
+.md-pagination__link svg {
+  color: var(--brand-text-muted);
+}
+
+.md-typeset .md-author--more {
+  background-color: var(--brand-raised);
+  color: var(--brand-text-muted);
+}
+
+.md-typeset .md-tag-icon::before,
+.md-annotation__index::after,
+.md-typeset .md-annotation-list li::before {
+  background-color: var(--brand-text-muted);
+}
+
+/* Hovered code links keep the code surface: Ultraviolet over any tint of it falls below 7:1 */
+
+.md-typeset a:focus code,
+.md-typeset a:hover code,
+.md-clipboard--inline:focus code,
+.md-clipboard--inline:hover code,
+.md-nav__link[for]:focus code,
+.md-nav__link[for]:hover code,
+.md-nav__link[href]:focus code,
+.md-nav__link[href]:hover code {
+  background-color: var(--md-code-bg-color);
+}
+
+/* Search field (desktop): the page background with a muted ring, instead of a translucent black or white wash */
+
+@media screen and (min-width: 60em) {
+  .md-search__form,
+  .md-search__form:hover {
+    background-color: var(--brand-bg);
+    box-shadow: inset 0 0 0 1px var(--brand-text-muted);
+  }
+}
+
+/* Current page and section (1.4.1): bold as well as Amber, so color is never the only cue */
+
+.md-nav__item--active > .md-nav__link,
+.md-nav__link--active,
+.md-tabs__item--active .md-tabs__link {
+  font-weight: 700;
+}
+
+/* Targets (2.5.5): at least 44 × 44 CSS px (2.2rem at Material's smallest root size) */
+
+.md-header__button,
+.md-header__button.md-logo {
+  margin: .1rem;
+  padding: .5rem;
+}
+
+@media screen and (min-width: 60em) {
+  .md-search__form {
+    height: 2.2rem;
+  }
+
+  .md-search__icon[for="__search"],
+  .md-search__options {
+    top: .5rem;
+  }
+}
+
+.md-search__options > .md-icon {
+  position: relative;
+}
+
+.md-search__icon::after {
+  content: "";
+  position: absolute;
+  inset: -.5rem;
+}
+
+.md-code__button {
+  position: relative;
+}
+
+.md-code__button::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 2.2rem / 2);
+  left: calc(50% - 2.2rem / 2);
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.md-nav__link {
+  box-sizing: border-box;
+  min-height: 1.2rem;
+  margin-top: .15rem;
+  align-items: center;
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-nav__title {
+    display: flex;
+    align-items: center;
+    min-height: 2.2rem;
+  }
+}
+
+.md-typeset .tabbed-labels > label {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-height: 2.2rem;
+}
+
+.md-typeset .tabbed-labels > label > [href]:first-child {
+  display: flex;
+  align-items: center;
+  min-height: 2.2rem;
+}
+
+[dir] .md-typeset details > summary {
+  padding-top: .6rem;
+  padding-bottom: .6rem;
+}
+
+[dir] .md-typeset details > summary::before,
+[dir] .md-typeset details > summary::after {
+  top: .6rem;
+}
+
+.md-typeset .tabbed-button {
+  position: relative;
+}
+
+.md-typeset .tabbed-button::before {
+  content: "";
+  position: absolute;
+  inset: calc((.9rem - 2.2rem) / 2);
+}
+
+.md-top {
+  padding-block: .5rem;
+}
+
+/* A table cell's only link reaches 44 px by taking over the cell's padding: the padding enlarges what it hit-tests,
+   the matching negative margin keeps its layout box, so rows keep Material's height and sentences don't move. */
+
+.md-typeset table:not([class]) :is(td, th) > a:only-child {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 2.2rem;
+  margin: -.9375em -1.25em;
+  padding: .9375em 1.25em;
+}
+
+/* Image links are not inside a sentence: no inline exception */
+
+.md-typeset a:has(> img:only-child) {
+  display: inline-flex;
+  align-items: center;
+  min-width: 2.2rem;
+  min-height: 2.2rem;
+}
+
+/* Text blocks (1.4.8): a blank line 1.5× the 1.6 line height between paragraphs. Line length is met by reflow (G204). */
+
+.md-typeset p:not(.admonition-title) + p {
+  margin-top: 2.4em;
+}
+
+/* Callouts: status colors; 10% box tint (the modern variant tints boxes) and a 12% title tint */
+
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-color: var(--brand-info);
+  background-color: color-mix(in srgb, var(--brand-info) 10%, transparent);
+}
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: color-mix(in srgb, var(--brand-info) 12%, transparent);
+}
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: var(--brand-info);
+}
+
+.md-typeset .admonition.abstract,
+.md-typeset details.abstract {
+  border-color: var(--brand-info);
+  background-color: color-mix(in srgb, var(--brand-info) 10%, transparent);
+}
+.md-typeset .abstract > .admonition-title,
+.md-typeset .abstract > summary {
+  background-color: color-mix(in srgb, var(--brand-info) 12%, transparent);
+}
+.md-typeset .abstract > .admonition-title::before,
+.md-typeset .abstract > summary::before {
+  background-color: var(--brand-info);
+}
+
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-color: var(--brand-info);
+  background-color: color-mix(in srgb, var(--brand-info) 10%, transparent);
+}
+.md-typeset .info > .admonition-title,
+.md-typeset .info > summary {
+  background-color: color-mix(in srgb, var(--brand-info) 12%, transparent);
+}
+.md-typeset .info > .admonition-title::before,
+.md-typeset .info > summary::before {
+  background-color: var(--brand-info);
+}
+
+.md-typeset .admonition.question,
+.md-typeset details.question {
+  border-color: var(--brand-info);
+  background-color: color-mix(in srgb, var(--brand-info) 10%, transparent);
+}
+.md-typeset .question > .admonition-title,
+.md-typeset .question > summary {
+  background-color: color-mix(in srgb, var(--brand-info) 12%, transparent);
+}
+.md-typeset .question > .admonition-title::before,
+.md-typeset .question > summary::before {
+  background-color: var(--brand-info);
+}
+
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: var(--brand-success);
+  background-color: color-mix(in srgb, var(--brand-success) 10%, transparent);
+}
+.md-typeset .tip > .admonition-title,
+.md-typeset .tip > summary {
+  background-color: color-mix(in srgb, var(--brand-success) 12%, transparent);
+}
+.md-typeset .tip > .admonition-title::before,
+.md-typeset .tip > summary::before {
+  background-color: var(--brand-success);
+}
+
+.md-typeset .admonition.success,
+.md-typeset details.success {
+  border-color: var(--brand-success);
+  background-color: color-mix(in srgb, var(--brand-success) 10%, transparent);
+}
+.md-typeset .success > .admonition-title,
+.md-typeset .success > summary {
+  background-color: color-mix(in srgb, var(--brand-success) 12%, transparent);
+}
+.md-typeset .success > .admonition-title::before,
+.md-typeset .success > summary::before {
+  background-color: var(--brand-success);
+}
+
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-color: var(--brand-warning);
+  background-color: color-mix(in srgb, var(--brand-warning) 10%, transparent);
+}
+.md-typeset .warning > .admonition-title,
+.md-typeset .warning > summary {
+  background-color: color-mix(in srgb, var(--brand-warning) 12%, transparent);
+}
+.md-typeset .warning > .admonition-title::before,
+.md-typeset .warning > summary::before {
+  background-color: var(--brand-warning);
+}
+
+.md-typeset .admonition.failure,
+.md-typeset details.failure {
+  border-color: var(--brand-danger);
+  background-color: color-mix(in srgb, var(--brand-danger) 10%, transparent);
+}
+.md-typeset .failure > .admonition-title,
+.md-typeset .failure > summary {
+  background-color: color-mix(in srgb, var(--brand-danger) 12%, transparent);
+}
+.md-typeset .failure > .admonition-title::before,
+.md-typeset .failure > summary::before {
+  background-color: var(--brand-danger);
+}
+
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  border-color: var(--brand-danger);
+  background-color: color-mix(in srgb, var(--brand-danger) 10%, transparent);
+}
+.md-typeset .danger > .admonition-title,
+.md-typeset .danger > summary {
+  background-color: color-mix(in srgb, var(--brand-danger) 12%, transparent);
+}
+.md-typeset .danger > .admonition-title::before,
+.md-typeset .danger > summary::before {
+  background-color: var(--brand-danger);
+}
+
+.md-typeset .admonition.bug,
+.md-typeset details.bug {
+  border-color: var(--brand-danger);
+  background-color: color-mix(in srgb, var(--brand-danger) 10%, transparent);
+}
+.md-typeset .bug > .admonition-title,
+.md-typeset .bug > summary {
+  background-color: color-mix(in srgb, var(--brand-danger) 12%, transparent);
+}
+.md-typeset .bug > .admonition-title::before,
+.md-typeset .bug > summary::before {
+  background-color: var(--brand-danger);
+}
+
+.md-typeset .admonition.example,
+.md-typeset details.example {
+  border-color: var(--brand-accent-2);
+  background-color: color-mix(in srgb, var(--brand-accent-2) 10%, transparent);
+}
+.md-typeset .example > .admonition-title,
+.md-typeset .example > summary {
+  background-color: color-mix(in srgb, var(--brand-accent-2) 12%, transparent);
+}
+.md-typeset .example > .admonition-title::before,
+.md-typeset .example > summary::before {
+  background-color: var(--brand-accent-2);
+}
+
+.md-typeset .admonition.quote,
+.md-typeset details.quote {
+  border-color: var(--brand-text-muted);
+  background-color: color-mix(in srgb, var(--brand-text-muted) 10%, transparent);
+}
+.md-typeset .quote > .admonition-title,
+.md-typeset .quote > summary {
+  background-color: color-mix(in srgb, var(--brand-text-muted) 12%, transparent);
+}
+.md-typeset .quote > .admonition-title::before,
+.md-typeset .quote > summary::before {
+  background-color: var(--brand-text-muted);
+}
+
+/* Brand typefaces: served by www.blunan.com to *.blunan.com docs sites (keep font: false in the generator config) */
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/source-sans-3-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/source-sans-3-latin-400-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/source-sans-3-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/source-sans-3-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://www.blunan.com/fonts/brand/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --md-text-font: "Source Sans 3";
+  --md-code-font: "IBM Plex Mono";
+}
