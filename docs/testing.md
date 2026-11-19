@@ -42,23 +42,21 @@ npm test -- -t "Home Assistant contract"
 npx jest --watch
 ```
 
-### With Docker { #with-docker }
+### In a throwaway container { #throwaway }
 
-If the dev container is unavailable, run commands in the official devcontainer image with Docker. The `--user` flag keeps `node_modules/` and coverage artifacts owned by your host user:
+If the dev container is unavailable, run the checks in its image with Docker. The checkout is mounted read-only and copied inside, so `node_modules/` and coverage output never reach your machine:
 
 ```sh
-# Install dependencies and run tests
-docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm ci && npm test"
-
-# Run tests with coverage
-docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm run test:coverage"
-
-# Run linter
-docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm run lint"
+docker run --rm -v "$PWD:/src:ro" -w /work mcr.microsoft.com/devcontainers/javascript-node:26-trixie sh -c '
+  tar -C /src --exclude=node_modules --exclude=.git -cf - . | tar -xf - &&
+  npm ci && npm run lint && npm run test:coverage'
 ```
+
+For a targeted run, replace `npm run lint && npm run test:coverage` with the test command, such as `npm test -- test/main.test.js`.
+
+### Locally { #locally }
+
+Without Docker, install Node.js 26, then run `npm ci` and the commands above from the repository root.
 
 CI ([`.github/workflows/test.yml`](https://github.com/blunan/ha-flichub-module/blob/main/.github/workflows/test.yml)) runs `npm run lint` and `npm run test:coverage` on every push and pull request.
 

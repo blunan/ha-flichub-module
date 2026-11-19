@@ -4,23 +4,30 @@ This page covers how to set up a development environment, check your changes, wo
 
 ## Development setup
 
+Use the first option that works: the dev container, then a throwaway container, and a local toolchain only without Docker.
+
 ### Dev container (recommended)
 
-The dev container provides Node.js 26 with all dependencies installed. You need [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+The dev container provides Node.js 26 and Python 3.14 (for the docs), with all dependencies installed. You need [Docker](https://www.docker.com/) and VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
 1. Open the repository in VS Code.
 2. Select **Reopen in Container** when prompted.
 
-### Docker
+### Throwaway container
 
-Without the dev container, run tests and linting in the devcontainer image:
+With Docker but without the dev container, run linting and the coverage tests in the dev container's image. The checkout is mounted read-only and copied inside, so nothing on your machine changes:
 
 ```sh
-docker run --rm -v "$PWD":/work -w /work --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  mcr.microsoft.com/devcontainers/javascript-node:26-trixie bash -c "npm test && npm run test:coverage && npm run lint"
+docker run --rm -v "$PWD:/src:ro" -w /work mcr.microsoft.com/devcontainers/javascript-node:26-trixie sh -c '
+  tar -C /src --exclude=node_modules --exclude=.git -cf - . | tar -xf - &&
+  npm ci && npm run lint && npm run test:coverage'
 ```
 
-For targeted test arguments and watch mode, see [Testing with Docker](testing.md#with-docker).
+For targeted test runs, see [Testing in a throwaway container](testing.md#throwaway).
+
+### Local toolchain
+
+Without Docker, install Node.js 26 and run `npm ci` from the repository root, then use the commands below.
 
 ## Commands
 
@@ -69,9 +76,19 @@ The Jest suite mocks the hub's `buttons` and `http` modules, so the module's fil
 
 ## Working on documentation { #documentation }
 
-Documentation is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/` and `mkdocs.yml`, published at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/). The README covers quick setup and usage for end users; the docs site provides comprehensive reference.
+Documentation is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/` and `mkdocs.yml`, published at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/). The README covers quick setup and usage for end users; the docs site provides comprehensive reference. Preview it in the first environment that works:
 
-To preview it locally:
+1. **Dev container:** run the commands below; VS Code forwards port 8000.
+2. **Throwaway container:** without the dev container, preview it on the same Python version as CI (`python-version` in `.github/workflows/docs.yml`):
+
+    ```sh
+    docker run --rm -it -p 127.0.0.1:8000:8000 -v "$PWD:/work:ro" -w /work python:3.14-slim-trixie \
+      sh -c 'pip install -q --root-user-action=ignore --require-hashes -r docs/requirements.txt && mkdocs serve -a 0.0.0.0:8000'
+    ```
+
+    Browse to `http://127.0.0.1:8000`. To run the strict build in the container, use `mkdocs build --strict --site-dir /tmp/site`, since the checkout is mounted read-only.
+
+3. **Local toolchain:** run the commands below with Python 3.14.
 
 ```sh
 python3 -m venv .venv
@@ -79,21 +96,14 @@ python3 -m venv .venv
 .venv/bin/mkdocs serve
 ```
 
-Without a local Python, preview it in a throwaway container on the same Python version as CI (`python-version` in `.github/workflows/docs.yml`):
-
-```sh
-docker run --rm -it -p 127.0.0.1:8000:8000 -v "$PWD:/work:ro" -w /work python:3.14-slim-trixie \
-  sh -c 'pip install -q --root-user-action=ignore --require-hashes -r docs/requirements.txt && mkdocs serve -a 0.0.0.0:8000'
-```
-
-Browse to `http://127.0.0.1:8000`. `mkdocs build --strict` verifies links and anchors, matching the CI check. In the container, add `--site-dir /tmp/site`, since the checkout is mounted read-only.
+`mkdocs build --strict` verifies links and anchors, matching the CI check.
 
 ### Writing the docs
 
 - **Links to repository files** outside `docs/` use absolute GitHub URLs: the strict build rejects relative links that leave `docs/`.
 - **Real files are embedded, not copied:** `config.js` and the blueprint appear through [snippets](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/) (`--8<-- "path"`). When you embed another file, add it to the `paths` in `docs.yml` so changes to it redeploy the site.
 - **The README links to the site** with absolute URLs. Give headings it links to an explicit `{ #id }`, so rewording a heading doesn't break the link.
-- **Formatting** follows the [formatting rules in `AGENTS.md`](https://github.com/blunan/ha-flichub-module/blob/main/AGENTS.md#formatting), which nothing enforces. In short: ASCII-only diagrams and program output (`|--` trees, `->` flows), menu paths written as **Settings** > **Devices & services**, one fence language per language (`sh`, `js`, `yaml`, `python`, `json`, `text`), sentence-case headings, one `#` title equal to the nav label followed by a summary paragraph, and plain second-person voice. The rules also cover files embedded with snippets.
+- **Formatting** follows the [formatting rules in `AGENTS.md`](https://github.com/blunan/ha-flichub-module/blob/main/AGENTS.md#docs-formatting), which nothing enforces. In short: ASCII-only diagrams and program output (`|--` trees, `->` flows), menu paths written as **Settings** > **Devices & services**, one fence language per language (`sh`, `js`, `yaml`, `python`, `json`, `text`), sentence-case headings, one `#` title equal to the nav label followed by a summary paragraph, and plain second-person voice. The rules also cover files embedded with snippets.
 
 ### Updating documentation dependencies { #docs-dependencies }
 

@@ -1,50 +1,43 @@
 # 🔘 Flic Hub Module for Home Assistant
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/blunan/ha-flichub-module/test.yml?branch=main&label=tests)](https://github.com/blunan/ha-flichub-module/actions/workflows/test.yml)
-[![Docs](https://img.shields.io/badge/docs-ha--flichub--module.blunan.com-526CFE?logo=materialformkdocs&logoColor=white)](https://ha-flichub-module.blunan.com/)
 [![Version](https://img.shields.io/github/v/release/blunan/ha-flichub-module?label=version)](https://github.com/blunan/ha-flichub-module/releases/latest)
-[![License](https://img.shields.io/github/license/blunan/ha-flichub-module)](LICENSE)
-[![Flic Hub SDK](https://img.shields.io/badge/flic--hub--sdk-compatible-f4a51c)](https://flic.io/flic-hub-sdk)
-[![Home Assistant](https://img.shields.io/badge/home--assistant-REST%20API-41BDF5)](https://developers.home-assistant.io/docs/api/rest)
-[![Tested with Jest](https://img.shields.io/badge/tested%20with-Jest-C21325)](https://jestjs.io)
+[![Docs](https://img.shields.io/badge/docs-ha--flichub--module.blunan.com-526CFE?logo=materialformkdocs&logoColor=white)](https://ha-flichub-module.blunan.com/)
+[![License](https://img.shields.io/github/license/blunan/ha-flichub-module)](https://github.com/blunan/ha-flichub-module/blob/main/LICENSE)
+[![Flic Hub SDK compatible](https://img.shields.io/badge/flic%20hub%20sdk-compatible-f4a51c)](https://flic.io/flic-hub-sdk)
+[![Home Assistant REST API](https://img.shields.io/badge/home%20assistant-REST%20API-41BDF5?logo=homeassistant&logoColor=white)](https://developers.home-assistant.io/docs/api/rest)
+[![Tested with Jest](https://img.shields.io/badge/tested%20with-jest-C21325?logo=jest&logoColor=white)](https://jestjs.io)
 
 This module uses the [Flic Hub SDK](https://flic.io/flic-hub-sdk) to send your Flic Button events and states to the [Home Assistant REST API](https://developers.home-assistant.io/docs/api/rest). No cloud, no bridge, no extra hardware — the hub talks to Home Assistant directly.
 
 > 📖 **Full documentation at [ha-flichub-module.blunan.com](https://ha-flichub-module.blunan.com/):** HTTPS certificates, how clicks are filtered, every entity in detail, more automation examples, and troubleshooting.
 
+> [!NOTE]
 > Automations using [pschmitt's flicd add-on](https://github.com/pschmitt/home-assistant-addons) continue to work after pairing buttons to the Flic Hub: this module emits the same event [type and data](https://www.home-assistant.io/integrations/flic) (`button_name`, `button_address`, and `click_type`; only `queued_time` is omitted).
 
 ## ✨ Features
 
-* 🖱️ **Click events** — `single`, `double` and `hold` gestures fire a `flic_click` event in Home Assistant, ready to trigger automations.
-* 🔋 **Battery tracking** — a sensor per button with a level-accurate icon (`mdi:battery-outline` → `mdi:battery`), including a configurable low-battery warning.
-* 📶 **Connectivity status** — know at a glance whether a button is reachable from the hub.
-* 🧹 **No phantom clicks** — built-in filtering drops the duplicate/spurious events some Flic buttons emit after a hold or double click.
-* 🎚️ **Configurable logging** — from silent to verbose, straight in the Flic Hub IDE console.
-
-## 📋 Table of contents
-
-* [Set up](#-set-up)
-* [Run automations with your Flics](#-run-automations-with-your-flics)
-* [Flic button card](#-flic-button-card)
-* [Documentation](#-documentation)
-* [Contributing](#-contributing)
-* [License](#-license)
+- 🖱️ **Click events** — `single`, `double` and `hold` gestures fire a `flic_click` event in Home Assistant, ready to trigger automations.
+- 🔋 **Battery tracking** — a sensor per button with a level-accurate icon (`mdi:battery-outline` to `mdi:battery`), including a configurable low-battery warning.
+- 📶 **Connectivity status** — know at a glance whether a button is reachable from the hub.
+- 🧹 **No phantom clicks** — built-in filtering drops the duplicate/spurious events some Flic buttons emit after a hold or double click.
+- 🎚️ **Configurable logging** — from silent to verbose, straight in the Flic Hub IDE console.
 
 ## 🔧 Set up
 
 Create a module on your Flic Hub in the [Online IDE](https://hubsdk.flic.io) and copy the files from the `flic_hub_module` folder:
-* `config.js`
-* `constants.js`
-* `ha.js`
-* `logger.js`
-* `main.js`
-* `module.json`
-* `utils.js`
+
+- `config.js`
+- `constants.js`
+- `ha.js`
+- `logger.js`
+- `main.js`
+- `module.json`
+- `utils.js`
 
 It should look something like this:
 
-![Flic Hub Online IDE](./docs/assets/FlicHubOnlineIDE.png?raw=true "Flic Hub Online IDE")
+![Flic Hub Online IDE](https://raw.githubusercontent.com/blunan/ha-flichub-module/main/docs/assets/FlicHubOnlineIDE.png "Flic Hub Online IDE")
 
 Then edit `config.js` to connect the Flic Hub to your Home Assistant instance.
 
@@ -60,7 +53,8 @@ Then edit `config.js` to connect the Flic Hub to your Home Assistant instance.
 | `VERIFY_CERTIFICATE`     | `false` | When using custom certificates, checks that `SERVER_HOST` matches the certificate's SAN hostname. |
 | `CUSTOM_CERTIFICATES`    | `''`    | One or more PEM certificates to trust when `USE_CUSTOM_CERTIFICATE` is `true`. |
 
-> ⚠️ Home Assistant requires the **API** integration (enabled by default). See the [Home Assistant API documentation](https://www.home-assistant.io/integrations/api) if needed.
+> [!IMPORTANT]
+> Home Assistant requires the **API** integration (enabled by default). See the [Home Assistant API documentation](https://www.home-assistant.io/integrations/api) if needed.
 
 For self-signed certificates or private CAs, see [HTTPS and certificates](https://ha-flichub-module.blunan.com/https/). See the [configuration guide](https://ha-flichub-module.blunan.com/configuration/) for parameter details and the [installation guide](https://ha-flichub-module.blunan.com/installation/) for verification and update steps.
 
@@ -87,7 +81,7 @@ Supported `click_type` values are `single`, `double`, and `hold`. Each event als
 
 Each physical press fires at most one event; duplicate clicks after holds or double clicks are filtered out. After starting the module or reconnecting a button, press it once to initialize click processing — see [How the module behaves](https://ha-flichub-module.blunan.com/behavior/).
 
-Or import the [blueprint](flic-button.yaml) (requires Home Assistant 2024.10+):
+Or import the [blueprint](https://github.com/blunan/ha-flichub-module/blob/main/flic-button.yaml) (requires Home Assistant 2024.10+):
 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fblunan%2Fha-flichub-module%2Fblob%2Fmain%2Fflic-button.yaml)
 
@@ -97,7 +91,7 @@ See [automation examples](https://ha-flichub-module.blunan.com/examples/) for mu
 
 Add an entities card to check button **state**, **battery**, and **connectivity**:
 
-![Flic Button Card](./docs/assets/FlicButtonCard.png?raw=true "Flic Button Card")
+![Flic Button Card](https://raw.githubusercontent.com/blunan/ha-flichub-module/main/docs/assets/FlicButtonCard.png "Flic Button Card")
 
 ```yaml
 type: entities
@@ -125,8 +119,8 @@ See [Entities](https://ha-flichub-module.blunan.com/entities/) for states, attri
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! The [development guide](https://ha-flichub-module.blunan.com/development/) covers the dev container, code style, CI, and releases; [How it works](https://ha-flichub-module.blunan.com/architecture/) explains the code, and the [testing guide](https://ha-flichub-module.blunan.com/testing/) covers running and writing tests.
+Contributions, issues, and feature requests are welcome. The [development guide](https://ha-flichub-module.blunan.com/development/) covers the dev container (recommended), throwaway containers, code style, CI, and releases; [How it works](https://ha-flichub-module.blunan.com/architecture/) explains the code, and the [testing guide](https://ha-flichub-module.blunan.com/testing/) covers running and writing tests.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://github.com/blunan/ha-flichub-module/blob/main/LICENSE).
