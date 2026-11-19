@@ -129,7 +129,7 @@ The lock is resolved on the Python version that `.github/workflows/docs.yml` ins
 
 [Renovate](https://docs.renovatebot.com/) manages dependency updates according to `renovate.json`:
 
-- It checks weekly, on Mondays.
+- It checks monthly, on the first Thursday before 4 AM (Mexico City time).
 - Minor and patch updates are grouped into a single pull request.
 - GitHub Actions are pinned to immutable commit digests and grouped in their own pull request.
 - Only releases at least 14 days old are proposed.
