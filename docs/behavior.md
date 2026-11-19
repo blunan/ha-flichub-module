@@ -1,17 +1,19 @@
 # How the module behaves
 
+This page describes how the module filters clicks, when it sends updates to Home Assistant, and what happens when the module starts, a button connects or disconnects, Home Assistant restarts, or you remove a button.
+
 ## One event per press { #one-event-per-press }
 
 Flic buttons can emit an unintended `single` click upon release after a **hold** or **double** click. The module filters these out, ensuring each physical press sends at most one `flic_click` event to Home Assistant.
 
-### What the hub reports
+### What the hub reports { #what-the-hub-reports }
 
 The Flic Hub identifies gestures alongside physical press and release events:
 
 ```text
-single   press ─ release ─────── 0.5 s, no second press ───────► single
-double   press ─ release ─ press ─ release ────────────────────► double
-hold     press ───────── 1 s ─────────► hold ─── release
+single  press -> release -> 0.5 s without a second press -> single
+double  press -> release -> press -> release -> double
+hold    press -> held for 1 s -> hold -> release
 ```
 
 A phantom click is an extra `single` after one of these gestures, without a new press of its own.

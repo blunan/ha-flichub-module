@@ -1,5 +1,7 @@
 # Automations and dashboards
 
+Every accepted click fires a `flic_click` event in Home Assistant. This page shows the event's data, automations and a blueprint that react to it, how to test them without pressing a button, and a dashboard card for the button's entities.
+
 ## The `flic_click` event { #flic-click }
 
 Every click the module accepts fires a `flic_click` event in Home Assistant, with this data:
@@ -135,7 +137,7 @@ The automation runs in `single` mode, ignoring new clicks while an action is exe
 
 ## Test without pressing a button { #test-an-automation }
 
-In Home Assistant, go to **Developer tools → Events**:
+In Home Assistant, go to **Developer tools** > **Events**:
 
 - To see real clicks, enter `flic_click` under **Listen to events**, select **Start listening**, and click the button.
 - To try an automation without the button, fire a `flic_click` event with data like this:

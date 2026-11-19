@@ -6,7 +6,12 @@
 		"source=${localEnv:HOME}/.claude.json,target=/home/node/.claude.json,type=bind"
 	],
 	"features": {
-		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+		// Python for the docs preview, on the version CI builds them with (python-version in .github/workflows/docs.yml).
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.14",
+			"installTools": false
+		}
 	},
 	"initializeCommand": "mkdir -p \"${localEnv:HOME}/.claude\" && touch \"${localEnv:HOME}/.claude.json\"",
 	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y tmux && npm ci",

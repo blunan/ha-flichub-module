@@ -12,25 +12,23 @@ exclude_docs: |
 theme:
   name: material
   font: false                                  # system fonts (no Google Fonts requests)
-  favicon: assets/favicon.svg                  # white copy of the material/radiobox-marked icon
+  favicon: assets/favicon.svg                  # material/radiobox-marked in --brand-accent, following the browser's color scheme
   icon:
     logo: material/radiobox-marked
     repo: fontawesome/brands/github
   palette:
-    - media: "(prefers-color-scheme)"
+    - scheme: slate                  # listed first: docs open dark
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/brightness-auto
+        icon: material/brightness-4
         name: Switch to light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
+    - scheme: default
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      toggle:
-        icon: material/brightness-4
-        name: Follow the system setting
   features:
     - navigation.sections
     - navigation.expand
@@ -40,6 +38,9 @@ theme:
     - content.tabs.link
     - search.highlight
     - toc.follow
+
+extra_css:
+  - stylesheets/blunan-brand.css
 
 plugins:
   - search
